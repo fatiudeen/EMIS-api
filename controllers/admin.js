@@ -90,12 +90,12 @@ export const getOneDept = async (req, res, next)=>{
                 return
         } else {
             res.status(201).json({
-                success: true,
+                success: true, 
                 doc
             })
             return
         }
-    })
+    }).clone()
 } catch (error){
     res.status(400).json({
         success: false,
@@ -104,8 +104,17 @@ export const getOneDept = async (req, res, next)=>{
 }
 
 //get users of one dept
+////////////////////////////////////////////////////////////////////////////
 export const getUsersFromDept = async (req, res, next)=>{
-    let _dept = Department.findOne(req.params.id)
+    let _dept
+    await Department.findOne({_id: req.params.id}).then(doc=>{
+        _dept = doc
+    }).catch(err=>{
+        return res.status(400).json({
+            success: false,
+            error: err.message
+        })
+    })
     try{
             await user.find({department: _dept._id}, (err, doc)=>{
                 if (err) {

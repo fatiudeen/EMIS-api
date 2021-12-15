@@ -8,55 +8,76 @@ import { Department } from "../models/dept.js"
 
 //REQUEST //post requests
 export const sendRequest = async (req, res) => {
-    let from = req.user._id
+    let from = req.user.department
     let to = req.body.to
     let reference = req.body.reference
     let message = {title: req.body.title,  
         message:{body: req.body.text 
                 ,attachment: req.file.path},
             }
-    
-    let dept = Department.findOne({abbr: to})
-    to = dept._id
-    if (!dept){
+    _request.findOne({reference: reference})
+    .then(doc=>{
+        if (doc){
+            return res.status(500).json({
+                success: false,
+                message: "this request already exits"
+            })
+        }
+    }).catch(err=>{
+        return res.status(400).json({
+            success: false,
+            message: err.message
+        })
+    })
+    await Department.findOne({abbr: to}).then(doc=>{
+        to = doc._id
+    }).catch(err=>{
+        return res.status(400).json({
+            success: false,
+            message: err.message
+        })
+    })
+    if (!to){
         res.status(400).json({
             success: false,
             error: "select a valid department"
          })
          return
       }
-    try {
+      if (to === from){
+          return res.status(500).json({
+              success: false,
+              message: 'you cannot make a request to your department'
+          })
+      }
+
     
     await _request.create({
         from,
         to,
         reference,
         message
-    }).populate({path: 'to', seleect: 'name abbr'})
+    })
+    .populate({path: 'to', seleect: 'name abbr'})
     .then((doc)=>{
+        
         res.status(200).json({
             success: true,
             doc
         })
     }
     ).catch(err =>{
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             error: err.message
     })
 })
-  } catch(error){
-    res.status(400).json({
-        success: false,
-        error: error.message
-  })
-  }
 }
 
 
 //TO-D0/// get one requests
 
-export const getOneRequest = async(req, res) => {
+export const getOneRequest = async (req, res) => {
     await _request.findOne({_id: req.params.requestId})
     .populate({ path: 'from', seleect: 'name abbr' })
     .exec((err, doc)=>{
@@ -74,15 +95,23 @@ export const getOneRequest = async(req, res) => {
             
           
         }
-    }).clone()
+    })//.clone()
         
 }
 /////////////////get all requests
-export const getAllRequests = (req, res) => {
-    let _dept = Department.findOne({_id: req.user.department})
+export const getAllRequests = async (req, res) => {
+    let _dept
+    await Department.findOne({_id: req.user.department}).then(doc=>{
+        _dept = doc
+    }).catch(err=>{
+        return res.status(400).json({
+            success: false,
+            message: err.message
+        })
+    })
     _request.find({ to: _dept._id })
-        .select(['from', 'date', 'title', 'reference'])
-        .populate({ path: 'from', seleect: 'name abbr' })
+        .populate({ path: 'from', select: 'name abbr' })
+        .select(['from', 'message.date', 'message.title', 'reference'])
         .exec((err, doc) => {
             if (err) {
                 res.status(400).json({
@@ -103,7 +132,7 @@ export const getAllRequests = (req, res) => {
 //MAILS
     //get one incoming mail
     export const getOneMail = async(req, res) => {
-        await mail.findOne({_id: req.pramas.mailId})
+        mail.findOne({_id: req.pramas.mailId})
         .populate({ path: 'from', seleect: 'name abbr' })
         .exec((err, doc)=>{
             if (err) {
@@ -124,7 +153,10 @@ export const getAllRequests = (req, res) => {
     }
     ////// get all incoming mails
     export const getAllMails =async(req, res) => {
-        await mail.find({to: req.user._id}, (err, doc)=>{
+        await mail.find({to: req.user._id})
+        .populate({ path: 'from', seleect: 'name username'})
+        .select(['from', 'message.date', 'message.title', 'reference'])
+        .exec((err, doc)=>{
             if (err) {
                 res.status(400).json({
                     success: false,
@@ -139,9 +171,9 @@ export const getAllRequests = (req, res) => {
                 })
 
             }
-        }).populate({ path: 'from', seleect: 'name username'}).clone()
+        })    
     }
-    ///////out going mail
+    ///////post outgoing mail
     export const sendMail = async (req, res) => {
         let from = req.user._id
         let to = req.body.to
@@ -156,7 +188,6 @@ export const getAllRequests = (req, res) => {
              })
              return
           }
-        try {
         
         await mail.create({
             from,
@@ -172,21 +203,27 @@ export const getAllRequests = (req, res) => {
                 error: err.message
         })
     })
-      } catch(error){
-        res.status(400).json({
-            success: false,
-            error: error.message
-      })
-      }
+
     }
 
     
 //LOGS
 
 export const logs = async (req, res, next)=>{
-    let _dept = Department.findOne({_id: req.user.department})
+    let _dept 
+    await Department.findOne({_id: req.user.department}).then(doc=>{
+        _dept = doc
+    }).catch(err=>{
+        return res.status(200).json({
+            success: true,
+            error: err.message
+        })
+    })
     try{
-            await _request.find({to: _dept._id} || {from: _dept._id}, (err, doc)=>{
+            await _request.find({to: _dept._id} || {from: _dept._id})
+            .populate({path: 'from', select:'name abbr' })
+            .exec((err, doc)=>{
+
                 if (err) {
                     res.status(400).json({
                         success: false,
@@ -197,15 +234,18 @@ export const logs = async (req, res, next)=>{
                         success: true,
                         doc
                     })
-                    return
+                    
                 }
-            }).clone()
+            })//.clone()
         } catch (error){
             res.status(400).json({
                 success: false,
                 error: error.message
-            })        }
+            })
+        }
     } 
+    
+
 
 //MANAGE USER DATA
     // get user profile 
@@ -314,7 +354,7 @@ export const logs = async (req, res, next)=>{
                         error: error.message
                     })
                     return
-    
+
                     })
                 .then(
                     res.status(200).json({
@@ -374,3 +414,26 @@ export const newProfileImg = (req, res, next) => {
         
     }
 
+    //get all users in this department
+    export const getUsers = async (req, res, next)=>{
+        try{
+                await user.find({department: req.user.department}, (err, doc)=>{
+                    if (err) {
+                        res.status(400).json({
+                            success: false,
+                            error: err.message})
+                            return
+                    } else {
+                        res.status(201).json({
+                            success: true,
+                            doc
+                        })
+                        return
+                    }
+                }).clone()
+            } catch (error){
+                res.status(400).json({
+                    success: false,
+                    error: error.message
+                })        }
+        } 

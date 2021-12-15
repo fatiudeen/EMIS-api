@@ -5,6 +5,7 @@ import { getUser,
         editRank,
         newProfileImg, 
         deleteProfileImg, 
+        getUsers,
         sendRequest,
         getAllRequests,
         getOneMail,
@@ -14,6 +15,11 @@ import { getUser,
         logs
 
             } from '../controllers/user.js'
+import {
+        allDepts,
+        getOneDept,
+        getOneUser
+} from '../controllers/admin.js'
 import verify from '../middlewares/verify.js'
 import {upload, avi} from '../middlewares/upload.js'
 
@@ -39,12 +45,20 @@ router.get("/request", verify, getAllRequests)
 
 router.get("/request/:requestId", verify, getOneRequest)
 
+router.get("/department", verify, allDepts)
+
+router.get("/department/:id", verify, getOneDept)
+
 //mail 
 router.post("/mail", verify, upload.single('file'), sendMail)
 
 router.get("/mail", verify, getAllMails)
 
 router.get("/mail/:mailId", verify, getOneMail)
+
+router.get("/users", verify, getUsers)
+
+router.get("/users/:id", verify, getOneUser)
 
 //logs
 router.get("/logs", verify, logs)

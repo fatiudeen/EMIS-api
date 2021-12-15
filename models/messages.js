@@ -5,7 +5,7 @@ const bodySchema = new mongoose.Schema({
 
     date: {
         type: String,
-        default: Date.now,
+        default: Date.now
     },
 
     title:{
@@ -29,9 +29,9 @@ const bodySchema = new mongoose.Schema({
 
 
 const RequestSchema = new mongoose.Schema({
-    to: { type: mongoose.Schema.Types.ObjectId, ref: 'dept' },
+    to: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
 
-    from: { type: mongoose.Schema.Types.ObjectId, ref: 'dept' },
+    from: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
     
     reference: {
         type: String,
@@ -52,7 +52,7 @@ const RequestSchema = new mongoose.Schema({
     metaData:{
         seenBy:
             [{ type: mongoose.Schema.Types.ObjectId,
-                 ref: 'user',
+                 ref: 'User',
                  date: {
                     type: String,
                     default: Date.now,
@@ -63,7 +63,7 @@ const RequestSchema = new mongoose.Schema({
                 }],
         editedBy:
             [{ type: mongoose.Schema.Types.ObjectId,
-                 ref: 'user',
+                 ref: 'User',
                  date: {
                     type: String,
                     default: Date.now,
@@ -76,10 +76,10 @@ const RequestSchema = new mongoose.Schema({
 });
 
 const MailSchema = new mongoose.Schema({
-    to: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    to: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
     from: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'user'
+        type: mongoose.Schema.Types.ObjectId, ref: 'User'
     },
 
 
