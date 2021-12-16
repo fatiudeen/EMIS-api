@@ -188,7 +188,10 @@ export const getOneUser = async (req, res, next)=>{
 }
     //register user
 export const registerUser = async (req, res, next) =>{
-    let {username, password, role, department} = req.body
+    let username = req.body.username +'@'+ req.body.department
+    let password = req.body.password 
+    let role = req.body.role
+    let department = req.body.department
 
     try {
         const _user = await user.findOne({username}).select("+password")
@@ -199,7 +202,7 @@ export const registerUser = async (req, res, next) =>{
             })
             return
         }
-        const dept = await Department.findOne({department})
+        const dept = await Department.findOne({abbr: department})
         if(!dept){
             res.status(401).json({
                 success: false,
@@ -207,7 +210,6 @@ export const registerUser = async (req, res, next) =>{
             })
             return
         }
-        username = username + '@' + dept.abbr
         department = dept
         await user.create({
             username, password, role, department
