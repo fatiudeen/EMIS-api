@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from "bcryptjs"
 import jwt from 'jsonwebtoken'
-import config from '../config.js';
 
 
 
@@ -73,7 +72,7 @@ userSchema.pre("save", async function(next){
 
 
 userSchema.methods.getSignedToken = function (){
-    return jwt.sign({id: this._id}, config.JWT_SECRET, {expiresIn: config.JWT_TIMEOUT} )
+    return jwt.sign({id: this._id}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_TIMEOUT} )
 }
 
 const User = mongoose.model('User', userSchema);

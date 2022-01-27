@@ -19,7 +19,7 @@ export default async (req, res, next) => {
     }
     
     try {
-        const decoded = jwt.verify(token, "2e49ba87f494618f11e685307db3793969aa47bb17c41cd1feef0348cf03638b29bc2a")
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const _user = await user.findById(decoded.id)
         if (!_user){
             res.status(404).json({

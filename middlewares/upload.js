@@ -1,5 +1,4 @@
 import multer from "multer";
-import config from "../config.js";
 import path from 'path'
 
 

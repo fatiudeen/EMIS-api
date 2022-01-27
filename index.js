@@ -1,8 +1,9 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import express, { urlencoded } from 'express'
 import mongoose from 'mongoose'
 import methodOverride from "method-override"
 
-import config from './config.js'
 import loginRoutes from './routes/loginRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
 import userRoutes from './routes/userRoutes.js'
@@ -21,7 +22,7 @@ app.use("/api", userRoutes)
 
 // Database configuration
 mongoose
-  .connect(config.mongoURI, {
+  .connect(process.env.mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -29,7 +30,7 @@ mongoose
   .catch((err) => console.log(err))
 
 
-const PORT = config.PORT
+const PORT = process.env.PORT
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
 );
