@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import bcrypt from "bcryptjs"
+import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 
@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         match: [
-            /^[a-zA-Z]+@[a-zA-Z]+$/i, "provide a valid username"
+            /^[a-zA-Z]+@[a-zA-Z]+$/i, 'provide a valid username'
         ]
     },
     name: {
@@ -32,7 +32,9 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
-        enum: ['Registry', 'Cheif Clerk', 'PA', 'Director', 'Cheif', 'Administrator']
+        enum: { values: ['Registry', 'Cheif Clerk', 'PA', 'Director', 'Cheif', 'Administrator'],
+                message: '{VALUE} is not a valid role'
+        }
     },
     isAdmin: {
         type: Boolean,
@@ -56,20 +58,28 @@ const userSchema = new mongoose.Schema({
 
 
 
-userSchema.pre("save", async function(next){
-    if(!this.isModified("password"))
+userSchema.pre('save', async function(next){
+    if(!this.isModified('password'))
         next()
 
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
     
-    if(this.role === "Administrator"){
+    if(this.role === 'Administrator'){
         this.isAdmin = true
     }
     next()
         
     })
 
+userSchema.pre('find', async function (next){
+    this.populate('department')
+    next()
+})
+
+userSchema.methods.comparePasswords = async function (password){
+    return await bcrypt.compare(password, this.password)
+}
 
 userSchema.methods.getSignedToken = function (){
     return jwt.sign({id: this._id}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_TIMEOUT} )

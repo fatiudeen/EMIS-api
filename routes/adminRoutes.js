@@ -1,66 +1,70 @@
 import express from 'express'
 import {registerUser,
-     deleteUser, 
-     editPassword, 
-     editRole, 
-     getUsers,
-     getOneUser,
-     createDept,
-     deleteDept,
-     allDepts,
-     getOneDept,
-     getUsersFromDept,
+    deleteUser, 
+    changePassword, 
+    updateUser, 
+    getUsers,
+    getUser,
+
+    } from '../controllers/user.js'
+
+import {
+    createDept,
+    deleteDept,
+    allDepts,
+    getOneDept,
+    getUsersFromDept
+    } from '../controllers/dept.js'
     
-    } from '../controllers/admin.js'
-import {getOneRequest,
-        sendMail,
-        getAllRequests,
-        getAllMails,
-        getOneMail,
-        sendRequest
-        } from '../controllers/user.js'
-import verifyAdmin from '../middlewares/verifyAdmin.js'
+import {
+    sendMail,
+    sendRequest,
+    getAllMails,
+    getAllRequests,
+    getOneMail,
+    getOneRequest
+} from '../controllers/messages.js'
 import { upload } from '../middlewares/upload.js'
 
 
 const router = express.Router()
 //manage department
-router.post("/dept/create", verifyAdmin, createDept)
+router.post('/dept/create',  createDept)
 
-router.get("/dept", verifyAdmin, allDepts)
+router.get('/dept',  allDepts)
 
-router.get("/dept/:id/users", verifyAdmin, getUsersFromDept)
+router.get('/dept/:id/users',  getUsersFromDept)
 
-router.get("/dept/:id", verifyAdmin, getOneDept)
+router.get('/dept/:id',  getOneDept)
 
-router.delete("/dept/:id/delete", verifyAdmin, deleteDept)
+router.delete('/dept/:id/delete',  deleteDept)
 
 
 //manage user
-    router.get("/users", verifyAdmin, getUsers)
+router.get('/users',  getUsers)
 
-    router.get("/users/:id", verifyAdmin, getOneUser)
+router.get('/users/:id',  getUser)
 
-    router.post("/users/create", verifyAdmin, registerUser)
+router.post('/users/create',  registerUser)
 
-    router.delete("/users/:id/delete", verifyAdmin, deleteUser)
+router.delete('/users/:id/delete',  deleteUser)
 
-    router.patch("/users/:id/editPassword", verifyAdmin, editPassword)
+router.patch('/users/:id/editPassword',  changePassword)
 
-    router.patch("/users/:id/editRole", verifyAdmin, editRole)
+router.patch('/users/:id/update',  updateUser)
 
 //request
-router.post("/request", verifyAdmin, upload.single('file'), sendRequest)
+router.post('/request',  upload, sendRequest)
 
-router.get("/request/:requestId", verifyAdmin, getAllRequests)
+router.get('/request/:requestId',  getAllRequests)
 
-router.get("/user", verifyAdmin, getOneRequest)
+router.get('/request',  getOneRequest)
 
 //mail 
-router.post("/mail", verifyAdmin, upload.single('file'), sendMail)
+router.post('/mail', upload, sendMail)
 
-router.get("/mail", verifyAdmin, getAllMails)
+router.get('/mail',  getAllMails)
 
-router.get("/mail/:mailId", verifyAdmin, getOneMail)
+router.get('/mail/:mailId',  getOneMail)
 
 export default router

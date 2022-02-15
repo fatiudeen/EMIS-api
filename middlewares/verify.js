@@ -1,40 +1,34 @@
 import jwt from 'jsonwebtoken'
-import {User as user} from "../models/user.js"
+import {User as user} from '../models/user.js'
+import ErrorResponse from '../helpers/ErrorResponse.js'
 
-export default async (req, res, next) => {
-    let token
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.split(' ')[0] === 'Bearer'
-    ){
-        token= req.headers.authorization.split(' ')[1];
-    }
-    
+export default (role) => {
+    return async (req, res, next) => {
+    let token =
+        req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' ?
+        req.headers.authorization.split(' ')[1]
+        : null
+
     if (!token){
-        res.status(401).json({
-            success: false,
-            error: "Not Authorized"
-        })
-        return
+        return next (new ErrorResponse('Not Authorized' , 401))
     }
     
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const _user = await user.findById(decoded.id)
         if (!_user){
-            res.status(404).json({
-            success: false,
-            error: "User not found"
-        })
-    }
-    req.user = _user
+            return next (new ErrorResponse('User not found' , 404))
 
-    next()
-    } catch (error) {
-        res.status(401).json({
-            success: false,
-            error: error.message
-        })
     }
-    
+    req.user = _user;
+
+    (role == 'admin' && _user.isAdmin === true) || (role == 'user' && _user.isAdmin === false) ?
+    next() 
+    : next (new ErrorResponse('Unauthorized: user is not an Admin' , 403))
+
+    } catch (error) {
+        next(error)
+        }
+
+    }
 }

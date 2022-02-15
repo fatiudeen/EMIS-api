@@ -18,13 +18,15 @@ const bodySchema = new mongoose.Schema({
             type: String,
             required: false
         },
-        attachment:{
+        attachment:[{
             type: String,
-            required: false
-        }
+            required: function() {
+                if (this.message.body.required === false){
+                    return true
+                }
+            }
+        }]
     }
-
-
 })
 
 
@@ -95,6 +97,16 @@ const MailSchema = new mongoose.Schema({
 
 
 });
+
+MailSchema.pre('find', async function (next){
+    this.populate('to from')
+    next()
+})
+
+RequestSchema.pre('find', async function (next){
+    this.populate('to from')
+    next()
+})
 
 export const mail = mongoose.model(
     'mail',

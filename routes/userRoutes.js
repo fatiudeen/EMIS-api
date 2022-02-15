@@ -1,68 +1,64 @@
 import express from 'express'
-import { getUser,
-        editName, 
-        changePassword, 
-        editRank,
-        newProfileImg, 
-        deleteProfileImg, 
-        getUsers,
-        sendRequest,
-        getAllRequests,
-        getOneMail,
-        getOneRequest,
-        getAllMails,
-        sendMail,
-        logs
-
-            } from '../controllers/user.js'
+import {
+        getUser,
+        updateUser,
+        changePassword,
+        } from '../controllers/user.js'
+        
+import {newProfileImg, deleteProfileImg} from '../controllers/upload.js'
 import {
         allDepts,
         getOneDept,
-        getOneUser
-} from '../controllers/admin.js'
-import verify from '../middlewares/verify.js'
-import {upload, avi} from '../middlewares/upload.js'
+        getUsersFromDept
+        } from '../controllers/dept.js'
+
+import {
+        sendMail,
+        sendRequest,
+        getAllMails,
+        getAllRequests,
+        getOneMail,
+        getOneRequest,
+        logs
+} from '../controllers/messages.js'
+import {upload,  avi} from '../middlewares/upload.js'
 
 const router = express.Router()
 
 //manage user data 
-router.get("/user", verify, getUser)
+router.get('/user', getUser)
 
-router.post("/user/avi", verify, avi.single('avi'), newProfileImg)
+router.post('/profile/avi', avi, newProfileImg)
 
-router.delete("/user/avi", verify, deleteProfileImg)
+router.delete('/profile/avi', deleteProfileImg)
  
-router.patch("/user/name", verify, editName)
+router.patch('/profile/update', updateUser)
 
-router.patch("/user/rank", verify, editRank)
-
-router.patch("/user/password", verify, changePassword)
+router.patch('/profile/password', changePassword)
 
 //request
-router.post("/request", verify, upload.single('file'), sendRequest)
+router.post('/request', upload, sendRequest)
 
-router.get("/request", verify, getAllRequests)
+router.get('/request', getAllRequests)
 
-router.get("/request/:requestId", verify, getOneRequest)
+router.get('/request/:requestId', getOneRequest)
 
-router.get("/department", verify, allDepts)
+router.get('/department', allDepts)
 
-router.get("/department/:id", verify, getOneDept)
+router.get('/department/:id', getOneDept)
 
 //mail 
-router.post("/mail", verify, upload.single('file'), sendMail)
+router.post('/mail', upload, sendMail)
 
-router.get("/mail", verify, getAllMails)
+router.get('/mail', getAllMails)
 
-router.get("/mail/:mailId", verify, getOneMail)
+router.get('/mail/:mailId', getOneMail)
 
-router.get("/users", verify, getUsers)
+router.get('/users', getUsersFromDept)
 
-router.get("/users/:id", verify, getOneUser)
+router.get('/users/:id', getUser)
 
 //logs
-router.get("/logs", verify, logs)
-
-
+router.get('/logs', logs)
 
 export default router
