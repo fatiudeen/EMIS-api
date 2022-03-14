@@ -1,17 +1,33 @@
 import { check } from 'express-validaror';
 
 export default {
-  avatar: [check('avatar').not().isEmpty()],
-  update: [check('name').optional(), check('rank').optional()],
-  password: [check('oldPassword'), check('newPassword'), check('newPassword2')],
+  avatar: [check('avatar').optional()],
 
-  request: [
-    check('to'),
-    check('reference'),
-    check('title'),
-    check('text'),
-    check('files'),
+  update: [
+    check('name').optional().isString().trim(),
+    check('rank').optional().isString().trim(),
   ],
 
-  mail: [check('to'), check('title'), check('text'), check('files')],
+  password: [
+    check('oldPassword').isLength({ min: 6 }),
+    check('newPassword').isLength({ min: 6 }),
+    check('newPassword2')
+      .equals(req.body.newPassword)
+      .withMessage('password does not match'),
+  ],
+
+  request: [
+    check('to').exist({ checkFalsey: true }),
+    check('reference').exist({ checkFalsey: true }).trim(),
+    check('title').exist({ checkFalsey: true }).trim(),
+    check('text').optional().string().trim(),
+    check('files').optional(),
+  ],
+
+  mail: [
+    check('to').exist({ checkFalsey: true }),
+    check('title').exist({ checkFalsey: true }).trim(),
+    check('text').exist({ checkFalsey: true }).trim(),
+    check('files').optional(),
+  ],
 };
