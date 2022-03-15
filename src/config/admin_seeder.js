@@ -1,9 +1,10 @@
-import config from '../config';
-import User from '../api/users/users.model';
+import config from './config.js';
+// import User from '../api/v1/models/User.model.js'
+import { User } from '../api/v0/models/user.js';
 
 export const createAdminAccount = async () => {
-  const defaultEmail = config.admin.email;
-  const defaultPassword = config.admin.password;
+  const defaultEmail = config.admin_email;
+  const defaultPassword = config.admin_password;
   const admin = await User.findOne({ email: defaultEmail });
   if (!admin) {
     await User.create({
@@ -16,4 +17,5 @@ export const createAdminAccount = async () => {
     admin.password = defaultPassword;
     await admin.save();
   }
+  console.log('seed created');
 };

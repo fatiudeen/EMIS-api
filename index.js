@@ -9,7 +9,7 @@ import userRoute from './src/api/v0/routes/userRoutes.js';
 import errorHandler from './src/api/v0/middlewares/errorHandler.js';
 //import db from './src/api/v0/helpers/db.js'
 import db from './src/config/db.js';
-import { verify as protect } from './src/api/v0/middlewares/verify.js';
+import protect from './src/api/v0/middlewares/verify.js';
 import config from './src/config/config.js';
 
 // version 1
