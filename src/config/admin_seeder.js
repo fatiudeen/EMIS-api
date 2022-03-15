@@ -6,10 +6,12 @@ import { Department } from '../api/v0/models/dept.js';
 export const createAdminAccount = async () => {
   const defaultEmail = config.admin_email;
   const defaultPassword = config.admin_password;
+
   //
+  let doc;
   const dept = await Department.findOne({ abbr: 'ADMIN' });
   if (!dept) {
-    const doc = await Department.create({
+    doc = await Department.create({
       name: 'support',
       abbr: 'ADMIN',
     });
@@ -22,8 +24,9 @@ export const createAdminAccount = async () => {
       name: 'admin',
       password: defaultPassword,
       role: 'Administrator',
-      department: dept._id || doc._id,
+      department: dept?._id || doc._id,
     });
+    console.log(dept._id, doc._id);
   }
   // if (!admin) {
   //   await User.create({
