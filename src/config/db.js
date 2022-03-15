@@ -10,6 +10,7 @@ export default () => {
       useUnifiedTopology: true,
     })
     .then(() => createAdminAccount())
+    .then(() => console.log('seed created'))
     .then(() => console.log(constants.MESSAGES.MONGODB_CONNECTED))
     .catch((err) => console.log(err));
 };
