@@ -21,7 +21,7 @@ export default async (req, res, next) => {
       return next(new ErrorResopnse('Invalid Details', 401));
     }
     const token = _user.getSignedToken();
-    res.status(201).json({ success: true, token });
+    res.status(201).json({ success: true, token, doc: _user });
   } catch (error) {
     next(error);
   }
