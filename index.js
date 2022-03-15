@@ -1,6 +1,7 @@
 import express, { urlencoded } from 'express';
 import methodOverride from 'method-override';
 import morgan from 'morgan';
+import cors from 'cors';
 
 // test version
 import authRoute from './src/api/v0/routes/authRoute.js';
