@@ -22,12 +22,15 @@ import config from './src/config/config.js';
 // import protect from './src/api/v1/middlewares/protect.js';
 
 const app = express();
-
+const corsOptions = {
+  origin: '*',
+};
 //middlewares
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(morgan('dev'));
+app.use(cors(corsOptions));
 
 //Routes
 app.use('/api', authRoute);
