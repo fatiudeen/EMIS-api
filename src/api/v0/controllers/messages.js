@@ -181,7 +181,7 @@ export const getOneMail = async (req, res, next) => {
 // get all incoming mails
 export const getAllMails = (req, res, next) => {
   mail
-    .find({ to: req.user._id })
+    .find()
     .or([{ to: req.user._id }, { from: req.user._id }])
     .populate({ path: 'from', seleect: 'name username' })
     .exec((err, doc) => {
