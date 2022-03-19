@@ -5,6 +5,7 @@ export default {
     try {
       let model = new Model(data);
       let result = await model.save();
+      console.log(model);
       return result;
     } catch (error) {
       throw new ErrorResponse(error);
@@ -28,7 +29,7 @@ export default {
   },
   findOne: async (Model, id) => {
     try {
-      let result = await Model.findById(id);
+      let result = await Model.findOne(id);
     } catch (error) {
       throw new ErrorResponse(error);
     }

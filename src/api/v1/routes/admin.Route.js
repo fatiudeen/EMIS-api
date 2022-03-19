@@ -81,7 +81,7 @@ router.get('/request/:requestId', getAllRequests);
 router.get('/request', getOneRequest);
 
 //mail
-router.post('/mail', adminValidator, validator, upload, sendMail);
+router.post('/mail', adminValidator.mail, validator, upload, sendMail);
 
 router.get('/mail', getAllMails);
 

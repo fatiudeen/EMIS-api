@@ -39,7 +39,13 @@ const userSchema = new mongoose.Schema({
   department: {
     type: mongoose.Types.ObjectId,
     ref: 'Department',
-    required: true,
+    required: function () {
+      if (this.role == 'Admin') {
+        return false;
+      } else {
+        return true;
+      }
+    },
   },
 
   avatar: {

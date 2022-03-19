@@ -5,13 +5,10 @@ import {
   changePassword,
   newAvatar,
   deleteAvatar,
+  getUsersFromDept,
 } from '../controllers/user.controller.js';
 
-import {
-  allDepts,
-  getOneDept,
-  getUsersFromDept,
-} from '../controllers/department.controller.js';
+import { allDepts, getOneDept } from '../controllers/department.controller.js';
 
 import {
   sendMail,
@@ -24,7 +21,7 @@ import {
 } from '../controllers/message.controller.js';
 import { upload, avatar } from '../helpers/upload.js';
 import userValidator from '../validators/user.validator.js';
-import validator from '../middlewares/validator.js';
+import { validator } from '../middlewares/validator.js';
 
 const router = express.Router();
 

@@ -107,6 +107,6 @@ RequestSchema.pre('find', async function (next) {
   next();
 });
 
-export const mail = mongoose.model('mail', MailSchema);
+export const Mail = mongoose.model('mail', MailSchema);
 
-export const request = mongoose.model('request', RequestSchema);
+export const Request = mongoose.model('request', RequestSchema);

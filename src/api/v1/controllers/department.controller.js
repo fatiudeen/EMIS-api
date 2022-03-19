@@ -26,7 +26,7 @@ export const deleteDept = async (req, res, next) => {
 };
 
 //get all dept
-export const allDepts = (req, res, next) => {
+export const allDepts = async (req, res, next) => {
   try {
     let result = await departmentService.getAllDepartments({});
     SuccessResponse.success(res, result);

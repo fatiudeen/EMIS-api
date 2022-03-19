@@ -1,4 +1,4 @@
-import Mail from '../models/Messages.model.js';
+import { Mail } from '../models/Messages.model.js';
 import Service from './Service.js';
 import userService from './user.service.js';
 

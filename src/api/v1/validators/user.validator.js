@@ -1,4 +1,4 @@
-import { check } from 'express-validaror';
+import { check } from 'express-validator';
 
 export default {
   avatar: [check('avatar').optional()],
@@ -12,22 +12,22 @@ export default {
     check('oldPassword').isLength({ min: 6 }),
     check('newPassword').isLength({ min: 6 }),
     check('newPassword2')
-      .equals(req.body.newPassword)
+      .equals('newPassword')
       .withMessage('password does not match'),
   ],
 
   request: [
-    check('to').exist({ checkFalsey: true }),
-    check('reference').exist({ checkFalsey: true }).trim(),
-    check('title').exist({ checkFalsey: true }).trim(),
-    check('text').optional().string().trim(),
+    check('to').exists({ checkFalsey: true }),
+    check('reference').exists({ checkFalsey: true }).trim(),
+    check('title').exists({ checkFalsey: true }).trim(),
+    check('text').optional().isString().trim(),
     check('files').optional(),
   ],
 
   mail: [
-    check('to').exist({ checkFalsey: true }),
-    check('title').exist({ checkFalsey: true }).trim(),
-    check('text').exist({ checkFalsey: true }).trim(),
+    check('to').exists({ checkFalsey: true }),
+    check('title').exists({ checkFalsey: true }).trim(),
+    check('text').exists({ checkFalsey: true }).trim(),
     check('files').optional(),
   ],
 };

@@ -1,70 +1,68 @@
-import express from 'express'
-import {registerUser,
-    deleteUser, 
-    changePassword, 
-    updateUser, 
-    getUsers,
-    getUser,
-
-    } from '../controllers/user.js'
+import express from 'express';
+import {
+  registerUser,
+  deleteUser,
+  changePassword,
+  updateUser,
+  getUsers,
+  getUser,
+} from '../controllers/user.js';
 
 import {
-    createDept,
-    deleteDept,
-    allDepts,
-    getOneDept,
-    getUsersFromDept
-    } from '../controllers/dept.js'
-    
+  createDept,
+  deleteDept,
+  allDepts,
+  getOneDept,
+  getUsersFromDept,
+} from '../controllers/dept.js';
+
 import {
-    sendMail,
-    sendRequest,
-    getAllMails,
-    getAllRequests,
-    getOneMail,
-    getOneRequest
-} from '../controllers/messages.js'
-import { upload } from '../middlewares/upload.js'
+  sendMail,
+  sendRequest,
+  getAllMails,
+  getAllRequests,
+  getOneMail,
+  getOneRequest,
+} from '../controllers/messages.js';
+import { upload } from '../middlewares/upload.js';
 
-
-const router = express.Router()
+const router = express.Router();
 //manage department
-router.post('/dept/create',  createDept)
+router.post('/dept/create', createDept);
 
-router.get('/dept',  allDepts)
+router.get('/dept', allDepts);
 
-router.get('/dept/:id/users',  getUsersFromDept)
+router.get('/dept/:id/users', getUsersFromDept);
 
-router.get('/dept/:id',  getOneDept)
+router.get('/dept/:id', getOneDept);
 
-router.delete('/dept/:id/delete',  deleteDept)
-
+router.delete('/dept/:id/delete', deleteDept);
 
 //manage user
-router.get('/users',  getUsers)
+router.get('/users', getUsers);
 
-router.get('/users/:id',  getUser)
+router.get('/users/:id', getUser);
 
-router.post('/users/create',  registerUser)
+router.post('/users/create', registerUser);
 
-router.delete('/users/:id/delete',  deleteUser)
+router.delete('/users/:id/delete', deleteUser);
 
-router.patch('/users/:id/editPassword',  changePassword)
+router.patch('/users/:id/password', changePassword);
 
-router.patch('/users/:id/update',  updateUser)
+router.patch('/users/:id/update', updateUser);
 
 //request
-router.post('/request',  upload, sendRequest)
+router.post('/request', upload, sendRequest);
 
-router.get('/request/:requestId',  getAllRequests)
+router.get('/request/:requestId', getAllRequests);
 
-router.get('/request',  getOneRequest)
+router.get('/request', getOneRequest);
 
-//mail 
-router.post('/mail', upload, sendMail)
+//mail
+router.post('/mail', upload, sendMail);
 
-router.get('/mail',  getAllMails)
+router.get('/mail', getAllMails);
 
-router.get('/mail/:mailId',  getOneMail)
+router.get('/mail/:mailId', getOneMail);
 
-export default router
+export default router;

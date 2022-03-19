@@ -14,9 +14,9 @@ import protect from './src/api/v0/middlewares/verify.js';
 import config from './src/config/config.js';
 
 // version 1
-// import authRoute from './src/api/v1/routes/auth.route.js'
-// import userRoute from './src/api/v1/routes/user.route.js'
-// import adminRoute from './src/api/v1/routes/admin.route.js'
+// import authRoute from './src/api/v1/routes/auth.Route.js';
+// import userRoute from './src/api/v1/routes/user.Route.js';
+// import adminRoute from './src/api/v1/routes/admin.Route.js';
 // import config from './src/config/config.js';
 // import { errorHandler } from './src/api/v1/middlewares/error.js';
 // import db from './src/config/db.js';
@@ -35,8 +35,8 @@ app.use(cors(corsOptions));
 
 //Routes
 app.use('/api', authRoute);
-app.use('/api/admin', protect('admin'), adminRoute);
-app.use('/api/user', protect('user'), userRoute);
+app.use('/api/admin', protect('Admin'), adminRoute);
+app.use('/api/user', protect('User'), userRoute);
 app.use('*', (req, res) => {
   res.status(500).json({
     status: 'Sorry Route does not exists',
@@ -47,5 +47,6 @@ app.use(errorHandler);
 // Database configuration
 db();
 
+const IP = process.env.IP || '127.0.0.1';
 const PORT = config.port;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, IP, () => console.log(`Server running on port ${IP}:${PORT}`));

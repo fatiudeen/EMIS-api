@@ -1,5 +1,5 @@
 import { ErrorResponse } from '../helpers/response.js';
-import Request from '../models/Messages.model.js';
+import { Request } from '../models/Messages.model.js';
 import Service from './Service.js';
 import departmentService from './department.service.js';
 

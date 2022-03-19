@@ -1,13 +1,13 @@
 import userService from '../services/user.service.js';
 import { SuccessResponse } from '../helpers/response.js';
 import departmentService from '../services/department.service.js';
-
+import { ErrorResponse } from '../helpers/response.js';
 //MANAGE USER DATA
 // get user data
 export const getUser = async (req, res, next) => {
   try {
     let id =
-      req.user.isAdmin === true
+      req.user.role === 'Admin'
         ? req.params.id
         : req.url == '/users/:id'
         ? req.params.id
@@ -47,7 +47,7 @@ export const updateUser = async (req, res, next) => {
 };
 
 //CHANGE PASSWORD
-export const changePassword = (req, res, next) => {
+export const changePassword = async (req, res, next) => {
   let oldPassword = req.body.oldPassword;
   let password = req.body.newPassword;
   let result;
@@ -77,6 +77,7 @@ export const registerUser = async (req, res, next) => {
   data.password = req.body.password;
   data.role = req.body.role;
   data.department = req.body.department;
+  // console.log(data);
 
   try {
     let user = await userService.getUser({ username: data.username });
@@ -126,7 +127,7 @@ export const newAvatar = async (req, res, next) => {
   }
 };
 
-//// remove avi
+//// remove avatar
 export const deleteAvatar = async (req, res, next) => {
   try {
     await fs.unlink(req.user.avatar);

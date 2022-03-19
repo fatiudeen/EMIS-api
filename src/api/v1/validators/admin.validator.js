@@ -1,20 +1,32 @@
+import { check } from 'express-validator';
 export default {
-  createDepartment: [check('name'), check('abbr')],
-  createUser: [
-    check('username').exist({ checkFalsey: true }).isString().trim(),
-    check('password').isLength({ min: 6 }),
-    check('role').exist(),
-    check('department'),
+  createDepartment: [
+    check('name').exists({ checkFalsey: true }).isString(),
+    check('abbr').exists({ checkFalsey: true }).isString(),
   ],
-  password: [check('oldPassword'), check('newPassword')],
+  createUser: [
+    check('username').exists({ checkFalsey: true }).isString().trim(),
+    check('password').isLength({ min: 6 }),
+    check('role').exists(),
+    check('department').exists(),
+  ],
+  password: [
+    check('oldPassword').isLength({ min: 6 }),
+    check('newPassword').isLength({ min: 6 }),
+  ],
   updateUser: [check('name').optional(), check('rank').optional()],
   request: [
-    check('to'),
-    check('reference'),
-    check('title'),
-    check('text'),
-    check('files'),
+    check('to').exists({ checkFalsey: true }),
+    check('reference').exists({ checkFalsey: true }).trim(),
+    check('title').exists({ checkFalsey: true }).trim(),
+    check('text').optional().isString().trim(),
+    check('files').optional(),
   ],
 
-  mail: [check('to'), check('title'), check('text'), check('files')],
+  mail: [
+    check('to').exists({ checkFalsey: true }),
+    check('title').exists({ checkFalsey: true }).trim(),
+    check('text').exists({ checkFalsey: true }).trim(),
+    check('files').optional(),
+  ],
 };
