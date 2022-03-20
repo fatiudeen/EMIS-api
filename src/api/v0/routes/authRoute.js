@@ -1,9 +1,10 @@
-import express from 'express'
-import login from '../controllers/login.js'
+import express from 'express';
+import { login, forgotPassword } from '../controllers/login.js';
 
-const router = express.Router()
+const router = express.Router();
 
-router.post("/login", login)
+router.post('/login', login);
 
+router.post('/problem', forgotPassword);
 
-export default router
+export default router;

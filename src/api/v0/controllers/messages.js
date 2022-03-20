@@ -49,7 +49,6 @@ export const sendRequest = (req, res, next) => {
             throw new ErrorResponse('Invalid Department', 404);
           }
 
-          console.log(data);
           _request
             .create(data)
             .then((doc) => {
@@ -79,7 +78,7 @@ export const sendRequest = (req, res, next) => {
 export const getOneRequest = (req, res, next) => {
   _request
     .findOne({ _id: req.params.requestId })
-    .populate({ path: 'from', seleect: 'name abbr' })
+    .populate({ path: 'from to', seleect: 'name abbr' })
     .exec((err, doc) => {
       if (err) {
         return next(new ErrorResponse(err.message));
@@ -137,10 +136,15 @@ export const sendMail = async (req, res) => {
   let data = {};
   data.from = req.user._id;
   data.title = req.body.title;
-
+  let path = [];
+  if (req.files != null) {
+    req.files.map((file) => {
+      path.push(file.path);
+    });
+  }
   data.message = {
     body: req.body.text,
-    attachment: req.file?.path,
+    attachment: path,
   };
   user
     .findOne({ username: req.body.to })
@@ -168,7 +172,7 @@ export const sendMail = async (req, res) => {
 //get one incoming mail
 export const getOneMail = async (req, res, next) => {
   mail
-    .findOne({ _id: req.pramas.mailId })
+    .findOne({ _id: req.params.mailId })
     .populate({ path: 'from', seleect: 'name abbr' })
     .exec((err, doc) => {
       if (err) {
@@ -213,5 +217,80 @@ export const logs = (req, res, next) => {
     })
     .catch((err) => {
       return next(new ErrorResponse(err.message));
+    });
+};
+
+/**
+ * meta data
+ */
+
+export const seen = async (req, res, next) => {
+  try {
+    let _req = await _request.findById(req.params.requestId);
+    let result = _req.metaData.seen.find((val) => {
+      val.by == req.user._id;
+    });
+    if (result == undefined) {
+      _req.metaData.seen.push({ by: req.user._id, date: Date.now });
+      await _req.save();
+    }
+    res.status(200).send({ success: true, doc: _req });
+  } catch (error) {
+    next(error);
+  }
+};
+export const minute = async (req, res, next) => {
+  try {
+    let _req = await _request.findById(req.params.requestId);
+    _req.metaData.minute.push({
+      by: req.user._id,
+      date: Date.now,
+      comment: req.body.comment,
+    });
+
+    res.status(200).send({ success: true, doc: _req });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const status = async (req, res, next) => {
+  try {
+    let _req = await _request.findById(req.params.requestId);
+    _req.metaData.status = req.params.status;
+
+    await _req.save();
+
+    res.status(200).send({ success: true, doc: _req });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const supportMail = async (req, res) => {
+  let data = {};
+  data.from = req.user._id;
+  data.title = req.body.title;
+
+  data.message = {
+    body: req.body.text,
+  };
+  user
+    .findOne({ username: 'support@ADMIN' })
+    .then((doc) => {
+      data.to = doc._id;
+
+      mail
+        .create(data)
+        .then((file) => {
+          res.status(201).json({ success: true, file });
+        })
+        .catch((err) => {
+          return next(new ErrorResponse(err.message));
+        });
+    })
+
+    .catch((err) => {
+      next(err);
     });
 };

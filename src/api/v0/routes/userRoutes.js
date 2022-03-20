@@ -13,6 +13,10 @@ import {
   getOneRequest,
   logs,
   forwardRequset,
+  seen,
+  minute,
+  status,
+  supportMail,
 } from '../controllers/messages.js';
 import { upload, avatar } from '../middlewares/upload.js';
 
@@ -55,5 +59,16 @@ router.get('/users/:id', getUser);
 
 //logs
 router.get('/logs', logs);
+
+// support
+router.post('/support', upload, supportMail);
+
+// meta data
+
+router.get('/metadata/:requestId', seen);
+
+router.post('/metadata/:requestId', minute); //comment
+
+router.get('/metadata/:requestId/:status', status);
 
 export default router;

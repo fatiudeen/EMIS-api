@@ -1,25 +1,5 @@
 import mongoose from 'mongoose';
 
-const bodySchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-
-  message: {
-    body: {
-      type: String,
-      required: false,
-    },
-    attachment: [
-      {
-        type: String,
-        required: false,
-      },
-    ],
-  },
-});
-
 const RequestSchema = new mongoose.Schema(
   {
     to: {
@@ -60,22 +40,19 @@ const RequestSchema = new mongoose.Schema(
     metaData: {
       seen: [
         {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
+          by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
           date: {
-            type: String,
-            default: Date.now,
+            type: Date,
           },
         },
       ],
       minute: [
         {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
+          by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
           date: {
             type: String,
-            default: Date.now,
           },
+          comment: { type: String },
         },
       ],
       status: {
@@ -86,6 +63,7 @@ const RequestSchema = new mongoose.Schema(
       forward: [
         {
           type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
         },
       ],
     },

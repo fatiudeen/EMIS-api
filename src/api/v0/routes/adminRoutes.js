@@ -16,14 +16,7 @@ import {
   getUsersFromDept,
 } from '../controllers/dept.js';
 
-import {
-  sendMail,
-  sendRequest,
-  getAllMails,
-  getAllRequests,
-  getOneMail,
-  getOneRequest,
-} from '../controllers/messages.js';
+import { sendMail, getAllMails, getOneMail } from '../controllers/messages.js';
 import { upload } from '../middlewares/upload.js';
 
 const router = express.Router();
@@ -50,13 +43,6 @@ router.delete('/users/:id/delete', deleteUser);
 router.patch('/users/:id/password', changePassword);
 
 router.patch('/users/:id/update', updateUser);
-
-//request
-router.post('/request', upload, sendRequest);
-
-router.get('/request/:requestId', getAllRequests);
-
-router.get('/request', getOneRequest);
 
 //mail
 router.post('/mail', upload, sendMail);
