@@ -1,6 +1,8 @@
 import requestService from '../services/request.service.js';
-import { SuccessResponse } from '../helpers/response.js';
+import { ErrorResponse, SuccessResponse } from '../helpers/response.js';
 import mailService from '../services/mail.service.js';
+import userService from '../services/user.service.js';
+import metadataService from '../services/metadata.Service.js';
 /**
  * there a to types of messages
  *
@@ -15,7 +17,7 @@ import mailService from '../services/mail.service.js';
  */
 
 //post requests
-export const sendRequest = (req, res, next) => {
+export const sendRequest = async (req, res, next) => {
   let data = {};
   let path = [];
 
@@ -27,13 +29,14 @@ export const sendRequest = (req, res, next) => {
   data.to = req.body.to;
   data.from = req.user.department;
   data.reference = req.body.reference;
-  data.message = {
-    title: req.body.title,
-    message: { body: req.body.text, attachment: path },
-  };
+  (data.title = req.body.title),
+    (data.message = {
+      body: req.body.text,
+      attachment: path,
+    });
 
   try {
-    let result = requestService.createRequest(data);
+    let result = await requestService.createRequest(data);
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
@@ -41,10 +44,10 @@ export const sendRequest = (req, res, next) => {
 };
 
 //get one requests
-export const getOneRequest = (req, res, next) => {
-  let id = req.pramas.requestId;
+export const getOneRequest = async (req, res, next) => {
+  let id = req.params.requestId;
   try {
-    let result = requestService.getRequest(id);
+    let result = await requestService.getRequest({ _id: id });
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
@@ -54,7 +57,9 @@ export const getOneRequest = (req, res, next) => {
 //get all requests
 export const getAllRequests = async (req, res, next) => {
   try {
-    let result = requestService.getAllRequests({ to: req.user.department });
+    let result = await requestService.getAllRequests({
+      to: req.user.department,
+    });
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
@@ -68,23 +73,24 @@ export const getAllRequests = async (req, res, next) => {
  */
 
 //post outgoing mail
-export const sendMail = (req, res) => {
+export const sendMail = async (req, res, next) => {
   let data = {};
   let path = [];
 
+  data.from = req.user._id;
+  data.title = req.body.title;
   if (req.files != null) {
     req.files.map((file) => {
       path.push(file.path);
     });
   }
-  data.from = req.user._id;
-  data.to = req.body.to;
   data.message = {
-    title: req.body.title,
-    message: { body: req.body.text, attachment: path },
+    body: req.body.text,
+    attachment: path,
   };
+  data.to = req.body.to;
   try {
-    let result = mailService.createMail(data);
+    let result = await mailService.createMail(data);
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
@@ -93,9 +99,9 @@ export const sendMail = (req, res) => {
 
 //get one incoming mail
 export const getOneMail = async (req, res, next) => {
-  let id = req.pramas.mailId;
+  let id = req.params.mailId;
   try {
-    let result = mailService.getMail(id);
+    let result = await mailService.getMail({ _id: id });
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
@@ -103,9 +109,25 @@ export const getOneMail = async (req, res, next) => {
 };
 
 // get all incoming mails
-export const getAllMails = (req, res, next) => {
+export const getAllMails = async (req, res, next) => {
   try {
-    let result = mailService.getAllMails({ to: req.user._id });
+    let result = await mailService.getAllMails({ to: req.user._id });
+    SuccessResponse.success(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const supportMail = async (req, res, next) => {
+  let data = {};
+  data.from = req.user._id;
+  data.title = req.body.title;
+
+  data.message = {
+    body: req.body.text,
+  };
+  try {
+    let result = await mailService.supportMail(data);
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
@@ -118,9 +140,67 @@ export const getAllMails = (req, res, next) => {
 
 //LOGS
 
-export const logs = (req, res, next) => {
+export const logs = async (req, res, next) => {
   try {
-    let result = requestService.getAllRequests({});
+    let result = await requestService.getAllRequests({});
+    SuccessResponse.success(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * metadata
+ */
+
+export const forwardRequest = async (req, res, next) => {
+  try {
+    let data = {};
+    data.id = req.params.id;
+    data.user = req.user;
+    data.requestId = req.params.requestId;
+
+    let result = await metadataService.forwardRequest(data);
+    SuccessResponse.success(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const seen = async (req, res, next) => {
+  try {
+    let data = {};
+    data.id = req.params.id;
+    data.user = req.user;
+    data.requestId = req.params.requestId;
+
+    let result = await metadataService.seen(data);
+    SuccessResponse.success(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const minute = async (req, res, next) => {
+  try {
+    let data = {};
+    data.comment = req.body.comment;
+    data.user = req.user;
+    data.requestId = req.params.requestId;
+    let result = await metadataService.minute(data);
+    SuccessResponse.success(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const status = async (req, res, next) => {
+  try {
+    let data = {};
+    data.requestId = req.params.requestId;
+    data.status = req.params.status;
+
+    let result = await metadataService.status(data);
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);

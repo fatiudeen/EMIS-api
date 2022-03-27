@@ -11,9 +11,14 @@ export default {
   password: [
     check('oldPassword').isLength({ min: 6 }),
     check('newPassword').isLength({ min: 6 }),
-    check('newPassword2')
-      .equals('newPassword')
-      .withMessage('password does not match'),
+    check('confirmPassword').custom((value, { req, loc, path }) => {
+      if (value !== req.body.newPassword) {
+        // throw error if passwords do not match
+        throw new Error("Passwords don't match");
+      } else {
+        return value;
+      }
+    }),
   ],
 
   request: [
@@ -27,7 +32,9 @@ export default {
   mail: [
     check('to').exists({ checkFalsey: true }),
     check('title').exists({ checkFalsey: true }).trim(),
-    check('text').exists({ checkFalsey: true }).trim(),
+    check('text').optional().trim(),
     check('files').optional(),
   ],
+
+  findMany: [check('users').isArray()],
 };

@@ -1,6 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import config from '../../../config/config.js';
+import fs from 'fs';
 
 const uploadFolder = config.multer_storage;
 const storage = multer.diskStorage({

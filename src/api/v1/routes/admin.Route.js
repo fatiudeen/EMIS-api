@@ -60,7 +60,7 @@ router.post(
 router.delete('/users/:id/delete', deleteUser);
 
 router.patch(
-  '/users/:id/editPassword',
+  '/users/:id/password',
   adminValidator.password,
   validator,
   changePassword
@@ -80,8 +80,8 @@ router.get('/request/:requestId', getAllRequests);
 
 router.get('/request', getOneRequest);
 
-//mail
-router.post('/mail', adminValidator.mail, validator, upload, sendMail);
+// mail
+router.post('/mail', upload, adminValidator.mail, validator, upload, sendMail);
 
 router.get('/mail', getAllMails);
 

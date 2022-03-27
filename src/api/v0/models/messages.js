@@ -44,13 +44,14 @@ const RequestSchema = new mongoose.Schema(
           date: {
             type: Date,
           },
+          read: { type: Boolean },
         },
       ],
       minute: [
         {
           by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
           date: {
-            type: String,
+            type: Date,
           },
           comment: { type: String },
         },

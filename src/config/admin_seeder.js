@@ -1,6 +1,6 @@
 import config from './config.js';
-//import User from '../api/v1/models/User.model.js';
-import { User } from '../api/v0/models/user.js';
+import User from '../api/v1/models/User.model.js';
+// import { User } from '../api/v0/models/user.js';
 import { ErrorResponse } from '../api/v1/helpers/response.js';
 
 export const createAdminAccount = async () => {

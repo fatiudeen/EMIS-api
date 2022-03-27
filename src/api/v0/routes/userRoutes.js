@@ -1,5 +1,10 @@
 import express from 'express';
-import { getUser, updateUser, changePassword } from '../controllers/user.js';
+import {
+  getUser,
+  updateUser,
+  changePassword,
+  findMany,
+} from '../controllers/user.js';
 
 import { newProfileImg, deleteProfileImg } from '../controllers/upload.js';
 import { allDepts, getOneDept, getUsersFromDept } from '../controllers/dept.js';
@@ -12,7 +17,7 @@ import {
   getOneMail,
   getOneRequest,
   logs,
-  forwardRequset,
+  forwardRequest,
   seen,
   minute,
   status,
@@ -33,6 +38,7 @@ router.patch('/profile/update', updateUser);
 
 router.patch('/profile/password', changePassword);
 
+router.post('/findmany', findMany);
 //request
 router.post('/request', upload, sendRequest);
 
@@ -44,7 +50,7 @@ router.get('/department', allDepts);
 
 router.get('/department/:id', getOneDept);
 
-router.get('request/forward/:id/:requestId', forwardRequset);
+router.get('/request/forward/:id/:requestId', forwardRequest);
 
 //mail
 router.post('/mail', upload, sendMail);
@@ -65,7 +71,9 @@ router.post('/support', upload, supportMail);
 
 // meta data
 
-router.get('/metadata/:requestId', seen);
+router.get('/metadata/:requestId/', seen);
+
+// router.get('/metadata/:requestId', forwardedTo);
 
 router.post('/metadata/:requestId', minute); //comment
 

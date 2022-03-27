@@ -2,6 +2,7 @@ import { User as user } from '../models/user.js';
 import { request as _request, mail } from '../models/messages.js';
 import { Department } from '../models/dept.js';
 import ErrorResponse from '../helpers/ErrorResponse.js';
+import mongoose from 'mongoose';
 
 //MANAGE USER DATA
 // get user data
@@ -115,6 +116,7 @@ export const registerUser = async (req, res, next) => {
       return next(new ErrorResponse('User exists', 406));
     }
     const dept = await Department.findOne({ abbr: department });
+    console.log(dept);
     if (!dept) {
       return next(new ErrorResponse('Department does not exist', 401));
     }
@@ -150,4 +152,17 @@ export const getUsers = (req, res, next) => {
     }
     res.status(201).json({ success: true, doc });
   });
+};
+
+export const findMany = async (req, res, next) => {
+  try {
+    let arr = req.body.users;
+    let array = arr.map((val) => {
+      return mongoose.Types.ObjectId(val);
+    });
+    let result = await user.find().where('_id').in(array);
+    res.status(201).json({ success: true, result });
+  } catch (error) {
+    next(error);
+  }
 };

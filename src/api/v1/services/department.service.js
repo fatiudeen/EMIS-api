@@ -20,7 +20,8 @@ export default {
   },
 
   getDepartment: async (id) => {
-    return await Service.findOne(Department, id);
+    let result = await Service.findOne(Department, id);
+    return result;
   },
 
   updateDepartment: async (data) => {

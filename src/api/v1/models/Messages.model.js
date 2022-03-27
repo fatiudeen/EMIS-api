@@ -1,101 +1,108 @@
 import mongoose from 'mongoose';
 import constants from '../../../config/constants.js';
 
-const bodySchema = new mongoose.Schema({
-  date: {
-    type: String,
-    default: Date.now,
-  },
-
-  title: {
-    type: String,
-    required: true,
-  },
-
-  message: {
-    body: {
-      type: String,
-      required: false,
-    },
-    attachment: [
-      {
-        type: String,
-        required: function () {
-          if (this.message.body.required === false) {
-            return true;
-          }
-        },
-      },
-    ],
-  },
-});
-
 const RequestSchema = new mongoose.Schema(
   {
-    to: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
+    to: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Department',
+      required: true,
+    },
 
-    from: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
+    from: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Department',
+      required: true,
+    },
 
     reference: {
       type: String,
       required: true,
     },
 
-    message: bodySchema,
-
-    messageStatus: {
+    title: {
       type: String,
-      enum: constants.ENUM.MESSAGE_STATUS,
-      default: constants.ENUM.MESSAGE_STATUS[0],
+      required: true,
+    },
+
+    message: {
+      body: {
+        type: String,
+        required: false,
+      },
+      attachment: [
+        {
+          type: String,
+          required: false,
+        },
+      ],
     },
 
     metaData: {
-      seenBy: [
+      seen: [
         {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
+          by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
           date: {
-            type: String,
-            default: Date.now,
+            type: Date,
           },
-          note: {
-            type: String,
-          },
+          read: { type: Boolean },
         },
       ],
-      editedBy: [
+      minute: [
+        {
+          by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+          date: {
+            type: Date,
+          },
+          comment: { type: String },
+        },
+      ],
+      status: {
+        type: String,
+        enum: ['Progress', 'Pending', 'Completed'],
+        default: 'Pending',
+      },
+      forward: [
         {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'User',
-          date: {
-            type: String,
-            default: Date.now,
-          },
         },
       ],
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const MailSchema = new mongoose.Schema({
-  to: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+const MailSchema = new mongoose.Schema(
+  {
+    to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 
-  from: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    from: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+
+    title: {
+      type: String,
+      required: true,
+    },
+
+    message: {
+      body: {
+        type: String,
+        required: false,
+      },
+      attachment: [
+        {
+          type: String,
+          required: false,
+        },
+      ],
+    },
   },
-
-  message: bodySchema,
-
-  messageStatus: {
-    type: String,
-    enum: ['Sent', 'Pending', 'Sent'],
-    default: 'pending',
-  },
-});
+  { timestamps: true }
+);
 
 MailSchema.pre('find', async function (next) {
   this.populate('to from');

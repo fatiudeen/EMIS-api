@@ -2,6 +2,7 @@ import { User as user } from '../models/user.js';
 import { request as _request, mail } from '../models/messages.js';
 import { Department } from '../models/dept.js';
 import ErrorResponse from '../helpers/ErrorResponse.js';
+import mongoose from 'mongoose';
 
 /**
  * there a to types of messages
@@ -111,16 +112,40 @@ export const getAllRequests = async (req, res, next) => {
     });
 };
 
-export const forwardRequset = async (req, res, next) => {
+export const forwardRequest = async (req, res, next) => {
   try {
-    let _user = await user.find({ _id: { $in: req.params.id } });
+    let _user = await user.find({ _id: req.params.id });
     let _req = await _request.findById(req.params.requestId);
+    let file;
+    const time = Date.now();
+
     if (!_user || !_req) {
-      throw new ErrorResponse();
+      throw new ErrorResponse('user or dept error', 404);
     }
-    _req.metaData.forward.push(req.params.id);
-    let result = await _req.save();
-    res.status(201).json({ success: true, result });
+    let reg = _req.metaData.seen.find((val) => {
+      return val.by.toString() == req.user._id.toString();
+    });
+    if (req.user.role == 'Registry' && reg == undefined) {
+      _req.metaData.seen.push({
+        by: req.user._id,
+        date: time,
+        read: true,
+      });
+    }
+    let result = _req.metaData.seen.find((val) => {
+      return val.by.toString() == req.params.id;
+    });
+    if (result == undefined) {
+      _req.metaData.seen.push({
+        by: req.params.id,
+        date: time,
+        read: false,
+      });
+      _req.metaData.forward.push(mongoose.Types.ObjectId(req.params.id));
+
+      file = await _req.save();
+    }
+    res.status(201).json({ success: true, file });
   } catch (error) {
     next(error);
   }
@@ -173,7 +198,7 @@ export const sendMail = async (req, res) => {
 export const getOneMail = async (req, res, next) => {
   mail
     .findOne({ _id: req.params.mailId })
-    .populate({ path: 'from', seleect: 'name abbr' })
+    .populate({ path: 'from to', seleect: 'name abbr' })
     .exec((err, doc) => {
       if (err) {
         return next(new ErrorResponse(err.message));
@@ -224,31 +249,64 @@ export const logs = (req, res, next) => {
  * meta data
  */
 
+// export const forwardedTo = async (req, res, next) => {
+//   try {
+//     let _req = await _request.findById(req.params.requestId);
+//     let result = _req.metaData.seen.find((val) => {
+//       val.by == req.user._id;
+//     });
+//     if (result == undefined) {
+//       _req.metaData.seen.push({
+//         by: req.user._id,
+//         date: Date.now,
+//         read: false,
+//       });
+//       await _req.save();
+//     }
+//     res.status(201).send({ success: true, doc: _req });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const seen = async (req, res, next) => {
   try {
     let _req = await _request.findById(req.params.requestId);
-    let result = _req.metaData.seen.find((val) => {
-      val.by == req.user._id;
+    let doc = _req.metaData.seen.find((val) => {
+      return val.by.toString() == req.params.id;
     });
-    if (result == undefined) {
-      _req.metaData.seen.push({ by: req.user._id, date: Date.now });
-      await _req.save();
+    if (doc == undefined) {
+      return res.status(201).json({
+        success: false,
+        message: 'user is not on the forwarded to list',
+      });
     }
-    res.status(200).send({ success: true, doc: _req });
+    let result = _req.metaData.seen.map((val) => {
+      if (val.by == req.user._id) {
+        val.read = true;
+      }
+    });
+
+    _req.metaData.seen = result;
+    let file = await _req.save();
+
+    res.status(201).send({ success: true, doc: file });
   } catch (error) {
     next(error);
   }
 };
+
 export const minute = async (req, res, next) => {
   try {
     let _req = await _request.findById(req.params.requestId);
+    const time = Date.now();
     _req.metaData.minute.push({
       by: req.user._id,
-      date: Date.now,
+      date: time,
       comment: req.body.comment,
     });
-
-    res.status(200).send({ success: true, doc: _req });
+    let result = await _req.save();
+    res.status(200).send({ success: true, doc: result });
   } catch (error) {
     next(error);
   }

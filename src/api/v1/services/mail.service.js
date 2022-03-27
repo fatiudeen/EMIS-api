@@ -1,6 +1,8 @@
 import { Mail } from '../models/Messages.model.js';
 import Service from './Service.js';
 import userService from './user.service.js';
+import { ErrorResponse } from '../helpers/response.js';
+import User from '../models/User.model.js';
 
 export default {
   createMail: async (data) => {
@@ -12,14 +14,6 @@ export default {
       throw new ErrorResponse('Forbbidden: cannot select this user', 403);
     }
     data.to = user._id;
-    let mail = await Mail.findOne({
-      to: data.to,
-      from: data.from,
-      'message.title': data.message.title,
-    });
-    if (mail) {
-      return next(new ErrorResponse('mail Exists', 409));
-    }
     return await Service.create(Mail, data);
   },
 
@@ -37,5 +31,16 @@ export default {
 
   updateMail: async (data) => {
     return await Service.update(Mail, id, data);
+  },
+  supportMail: (data) => {
+    try {
+      let _user = User.findOne({ username: 'support@ADMIN' });
+      data.to = _user._id;
+
+      let _mail = Mail.create(data);
+      return _mail;
+    } catch (error) {
+      throw new ErrorResponse(error);
+    }
   },
 };

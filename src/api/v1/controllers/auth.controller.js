@@ -13,3 +13,18 @@ export const login = async (req, res, next) => {
     next(error);
   }
 };
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    let data = {};
+    data.title = `${req.body.name}: ${req.body.title}`;
+
+    data.message = {
+      body: req.body.text,
+    };
+    let result = await userService.forgotPassword(data);
+    SuccessResponse.success(res, result);
+  } catch (error) {
+    next(error);
+  }
+};

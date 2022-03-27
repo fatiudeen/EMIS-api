@@ -63,6 +63,14 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('findOne', async function (next) {
+  this.populate('department');
+  next();
+});
+userSchema.pre('findById', async function (next) {
+  this.populate('department');
+  next();
+});
 userSchema.pre('find', async function (next) {
   this.populate('department');
   next();

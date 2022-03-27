@@ -10,10 +10,7 @@ export default {
     check('role').exists(),
     check('department').exists(),
   ],
-  password: [
-    check('oldPassword').isLength({ min: 6 }),
-    check('newPassword').isLength({ min: 6 }),
-  ],
+  password: [check('newPassword').isLength({ min: 6 })],
   updateUser: [check('name').optional(), check('rank').optional()],
   request: [
     check('to').exists({ checkFalsey: true }),
@@ -27,6 +24,6 @@ export default {
     check('to').exists({ checkFalsey: true }),
     check('title').exists({ checkFalsey: true }).trim(),
     check('text').exists({ checkFalsey: true }).trim(),
-    check('files').optional(),
+    check('file').optional(),
   ],
 };

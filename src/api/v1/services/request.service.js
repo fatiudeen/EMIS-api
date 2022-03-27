@@ -7,7 +7,7 @@ export default {
   createRequest: async (data) => {
     let request = await Request.findOne({ reference: data.reference });
     if (request) {
-      return next(new ErrorResponse('Request Exists', 409));
+      throw new ErrorResponse('Request Exists', 409);
     }
     let department = await departmentService.getDepartment({ abbr: data.to });
     if (!department) {

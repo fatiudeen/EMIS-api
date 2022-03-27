@@ -1,5 +1,5 @@
 class SuccessResponse {
-  static success(res, data, status = 200) {
+  static success(res, data, status = 201) {
     res.status(status);
     if (data && data.docs) {
       return res.json({
