@@ -113,6 +113,23 @@ RequestSchema.pre('find', async function (next) {
   this.populate('to from');
   next();
 });
+MailSchema.pre('findById', async function (next) {
+  this.populate('to from');
+  next();
+});
+
+RequestSchema.pre('findById', async function (next) {
+  this.populate('to from');
+  next();
+});MailSchema.pre('findOne', async function (next) {
+  this.populate('to from');
+  next();
+});
+
+RequestSchema.pre('findOne', async function (next) {
+  this.populate('to from');
+  next();
+});
 
 export const Mail = mongoose.model('mail', MailSchema);
 

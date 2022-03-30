@@ -3,6 +3,7 @@ import { ErrorResponse, SuccessResponse } from '../helpers/response.js';
 import mailService from '../services/mail.service.js';
 import userService from '../services/user.service.js';
 import metadataService from '../services/metadata.Service.js';
+import { sanitizeQuery } from 'express-validator';
 /**
  * there a to types of messages
  *
@@ -142,7 +143,8 @@ export const supportMail = async (req, res, next) => {
 
 export const logs = async (req, res, next) => {
   try {
-    let result = await requestService.getAllRequests({});
+    let query = { 'metaData.status': 'Completed' };
+    let result = await requestService.getAllRequests(query);
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
