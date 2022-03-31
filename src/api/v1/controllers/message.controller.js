@@ -181,7 +181,7 @@ export const forwardRequest = async (req, res, next) => {
 export const seen = async (req, res, next) => {
   try {
     let data = {};
-    data.id = req.params.id;
+    //data.id = req.params.id;
     data.user = req.user;
     data.requestId = req.params.requestId;
 

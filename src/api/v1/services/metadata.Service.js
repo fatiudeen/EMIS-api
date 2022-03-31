@@ -46,9 +46,10 @@ export default {
     try {
       let _req = await Request.findById(data.requestId);
       let doc = _req.metaData.seen.find((val) => {
-        return val.by.toString() == data.id;
+        return val.by.toString() == data.user._id;
       });
-      if (doc == undefined) {
+      // console.log()
+      if (doc == undefined && data.user.role != 'Registry') {
         throw new ErrorResponse('this user is not on the forward list', 400);
       }
       let result = _req.metaData.seen.map((val) => {
