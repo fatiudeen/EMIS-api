@@ -106,11 +106,14 @@ const MailSchema = new mongoose.Schema(
 
 MailSchema.pre('find', async function (next) {
   this.populate('to from');
+  this.sort({ createdAt: -1 });
+
   next();
 });
 
 RequestSchema.pre('find', async function (next) {
   this.populate('to from');
+  this.sort({ createdAt: -1 });
   next();
 });
 MailSchema.pre('findById', async function (next) {
@@ -121,7 +124,8 @@ MailSchema.pre('findById', async function (next) {
 RequestSchema.pre('findById', async function (next) {
   this.populate('to from');
   next();
-});MailSchema.pre('findOne', async function (next) {
+});
+MailSchema.pre('findOne', async function (next) {
   this.populate('to from');
   next();
 });

@@ -1,7 +1,8 @@
 
 # dependencies
 /node_modules
-/upload
+/upload/*
+!/upload/.gitkeep
 
 /.pnp
 .pnp.js

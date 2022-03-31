@@ -73,6 +73,7 @@ userSchema.pre('findById', async function (next) {
 });
 userSchema.pre('find', async function (next) {
   this.populate('department');
+  this.sort({ createdAt: -1 });
   next();
 });
 

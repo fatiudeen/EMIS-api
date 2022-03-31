@@ -32,13 +32,21 @@ export default {
   updateMail: async (data) => {
     return await Service.update(Mail, id, data);
   },
-  supportMail: (data) => {
+  supportMail: async (data) => {
     try {
-      let _user = User.findOne({ username: 'support@ADMIN' });
+      let _user = await User.findOne({ username: 'support@ADMIN' });
       data.to = _user._id;
 
-      let _mail = Mail.create(data);
+      let _mail = await Mail.create(data);
       return _mail;
+    } catch (error) {
+      throw new ErrorResponse(error);
+    }
+  },
+  getMyMail: async (data, data1) => {
+    try {
+      let mail = await Mail.find().or([data, data1]);
+      return mail;
     } catch (error) {
       throw new ErrorResponse(error);
     }

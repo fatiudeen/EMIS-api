@@ -35,4 +35,12 @@ export default {
   updateRequest: async (data) => {
     return await Service.update(Request, id, data);
   },
+  getMyRequest: async (data, data1) => {
+    try {
+      let request = await Request.find().or([data, data1]);
+      return request;
+    } catch (error) {
+      throw new ErrorResponse(error);
+    }
+  },
 };

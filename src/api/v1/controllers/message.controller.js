@@ -57,10 +57,17 @@ export const getOneRequest = async (req, res, next) => {
 
 //get all requests
 export const getAllRequests = async (req, res, next) => {
+  let data1 = {};
+  let data2 = {};
+  if (req.user.role == 'Admin' || req.user.role == 'Registry') {
+    data1.to = req.user.department;
+    data2.from = req.user.department;
+  } else {
+    data1 = { 'metaData.forward': req.user._id, to: req.user.department };
+    data2 = { 'metaData.forward': req.user._id, from: req.user.department };
+  }
   try {
-    let result = await requestService.getAllRequests({
-      to: req.user.department,
-    });
+    let result = await requestService.getMyRequest(data1, data2);
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
@@ -112,7 +119,9 @@ export const getOneMail = async (req, res, next) => {
 // get all incoming mails
 export const getAllMails = async (req, res, next) => {
   try {
-    let result = await mailService.getAllMails({ to: req.user._id });
+    let data = { to: req.user._id };
+    let data1 = { form: req.user._id };
+    let result = await mailService.getMyMail(data, data1);
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);
