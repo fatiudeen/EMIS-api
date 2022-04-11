@@ -15,6 +15,10 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 400);
   }
 
+  if (err.message === 'jwt expired') {
+    error = new ErrorResponse(error.message, 401);
+  }
+  console.log(`${req.hostname}${req.url}`, error);
   res.status(error.statusCode || 500).json({
     sucess: false,
     message: error.message || 'Server Error',
