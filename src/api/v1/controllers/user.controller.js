@@ -40,6 +40,7 @@ export const updateUser = async (req, res, next) => {
 
 //CHANGE PASSWORD
 export const changePassword = async (req, res, next) => {
+  console.log(req.body);
   let oldPassword = req.body.oldPassword;
   let password = req.body.newPassword;
   let result;
@@ -68,6 +69,8 @@ export const registerUser = async (req, res, next) => {
   data.password = req.body.password;
   data.role = req.body.role;
   data.username = `${req.body.username}@${req.body.department.toUpperCase()}`;
+  data.name = req.body.name;
+  data.rank = req.body.rank;
 
   try {
     const user = await userService.getUser({ username: data.username });

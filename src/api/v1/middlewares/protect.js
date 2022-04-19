@@ -20,14 +20,14 @@ export default (role) => {
       const decoded = jwt.verify(token, config.jwt_secret);
       const user = await User.findById(decoded.id);
       if (!user) {
-        return next(new ErrorResponse(constants.MESSAGES.UNAUTHORIZED, 404));
+        return next(new ErrorResponse(constants.MESSAGES.UNAUTHORIZED, 401));
       }
       req.user = user;
 
       // if (role === 'Admin') {
       //   role == user.role
       //     ? next()
-      //     : next(new ErrorResponse(constants.MESSAGES.UNAUTHORIZED, 403));
+      //     : next(new ErrorResponse(constants.MESSAGES.UNAUTHORIZED, 401));
       // }
       next();
     } catch (error) {

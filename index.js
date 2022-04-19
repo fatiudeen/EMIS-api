@@ -49,6 +49,7 @@ app.use((req, res, next) => {
 
 //Routes
 app.use('/api/upload', protect('User'), express.static(__dirname + '/upload'));
+app.use('/api/avi', express.static(__dirname + '/avi'));
 app.use('/api', authRoute);
 app.use('/api/admin', protect('Admin'), adminRoute);
 app.use('/api/user', protect('User'), userRoute);
@@ -66,7 +67,7 @@ const IP = process.env.IP || '127.0.0.1';
 const PORT = config.port;
 httpServer.listen(
   PORT,
-  /*IP,*/ () => console.log(`Server running on ${IP}:${PORT}`)
+  /* IP,*/ () => console.log(`Server running on ${IP}:${PORT}`)
 );
 
 // io.emit('message', 'i love you');

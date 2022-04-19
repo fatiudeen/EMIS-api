@@ -37,9 +37,9 @@ router.patch('/profile/update', userValidator.update, validator, updateUser);
 
 router.post(
   '/profile/avatar',
-  userValidator.avatar,
-  validator,
   avatar,
+  // userValidator.avatar,
+  // validator,
   newAvatar
 );
 

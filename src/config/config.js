@@ -8,4 +8,5 @@ export default {
   multer_storage: process.env.MULTER_STORAGE,
   admin_email: process.env.ADMIN_EMAIL,
   admin_password: process.env.ADMIN_PASSWORD,
+  multer_storage_avi: process.env.MULTER_STORAGE_AVI,
 };

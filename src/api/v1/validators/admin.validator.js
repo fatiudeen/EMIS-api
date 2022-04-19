@@ -9,6 +9,8 @@ export default {
     check('password').isLength({ min: 6 }),
     check('role').exists(),
     check('department').exists(),
+    check('rank').exists(),
+    check('name').exists(),
   ],
   password: [check('newPassword').isLength({ min: 6 })],
   updateUser: [check('name').optional(), check('rank').optional()],

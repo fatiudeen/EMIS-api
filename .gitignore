@@ -3,6 +3,8 @@
 /node_modules
 /upload/*
 !/upload/.gitkeep
+/avi/*
+!/avi/.gitkeep
 
 /.pnp
 .pnp.js
