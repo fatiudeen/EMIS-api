@@ -1,7 +1,6 @@
-import config from './config.js';
-import User from '../api/v1/models/User.model.js';
-// import { User } from '../api/v0/models/user.js';
-import { ErrorResponse } from '../api/v1/helpers/response.js';
+import config from '../../../config/config.js';
+import User from '../models/User.model.js';
+import { ErrorResponse } from './response.js';
 
 export const createAdminAccount = async () => {
   const defaultEmail = config.admin_email;
