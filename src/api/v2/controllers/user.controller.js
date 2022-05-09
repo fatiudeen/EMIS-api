@@ -71,6 +71,7 @@ export const registerUser = async (req, res, next) => {
   data.username = `${req.body.username}@${req.body.department.toUpperCase()}`;
   data.name = req.body.name;
   data.rank = req.body.rank;
+  data.avi = 'avi/placeholder.png';
 
   try {
     const user = await userService.getUser({ username: data.username });
@@ -160,6 +161,15 @@ export const findMany = async (req, res, next) => {
     let array = req.body.users;
 
     let result = await userService.findMany(array);
+    SuccessResponse.success(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDeptAndUsers = async (req, res, next) => {
+  try {
+    let result = await departmentService.getDeptAndUsres();
     SuccessResponse.success(res, result);
   } catch (error) {
     next(error);

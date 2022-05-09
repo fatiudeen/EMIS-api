@@ -4,9 +4,9 @@ import Service from './Service.js';
 
 export default {
   createDepartment: async (data) => {
-    let department = Service.findOne(data);
-    if (!department) {
-      throw new ErrorResponse();
+    let department = await Department.findOne({ abbr: data.abbr });
+    if (department) {
+      throw new ErrorResponse('department exists');
     }
     return await Service.create(Department, data);
   },
@@ -26,5 +26,22 @@ export default {
 
   updateDepartment: async (data) => {
     return await Service.update(Department, id, data);
+  },
+  getDeptAndUsres: async () => {
+    try {
+      let result = await Department.aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: '_id',
+            foreignField: 'department',
+            as: 'users',
+          },
+        },
+      ]);
+      return result;
+    } catch (error) {
+      throw new ErrorResponse(error);
+    }
   },
 };

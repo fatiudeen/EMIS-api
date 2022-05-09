@@ -1,4 +1,4 @@
-import { check } from 'express-validator';
+import { check, body, param } from 'express-validator';
 
 export default {
   avatar: [check('avatar').optional()],
@@ -37,4 +37,18 @@ export default {
   ],
 
   findMany: [check('users').isArray()],
+
+  newGroup: [
+    body('to').optional().trim(),
+    body('alias').exists({ checkFalsey: true }).trim(),
+  ],
+  conversation: [
+    check('text').optional().trim(),
+    check('to').exists({ checkFalsey: true }).trim(),
+  ],
+  conversationGroup: [
+    body('text').exists({ checkFalsey: true }).trim(),
+    param('groupConvoId').exists({ checkFalsey: true }).trim(),
+  ],
+  renameGroup: [check('name').exists({ checkFalsey: true }).trim()],
 };

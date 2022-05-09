@@ -6,15 +6,19 @@ import User from '../models/User.model.js';
 
 export default {
   createMail: async (data) => {
-    let user = await userService.getUser({ username: data.to });
-    if (!user) {
-      throw new ErrorResponse('Invalid user', 404);
+    try {
+      let user = await userService.getUser({ username: data.to });
+      if (!user) {
+        throw new ErrorResponse('Invalid user', 404);
+      }
+      if (data.to === data.from) {
+        throw new ErrorResponse('Forbbidden: cannot select this user', 403);
+      }
+      data.to = user._id;
+      return await Service.create(Mail, data);
+    } catch (error) {
+      throw new ErrorResponse(error);
     }
-    if (data.to === data.from) {
-      throw new ErrorResponse('Forbbidden: cannot select this user', 403);
-    }
-    data.to = user._id;
-    return await Service.create(Mail, data);
   },
 
   deleteMail: async (id) => {

@@ -18,6 +18,11 @@ const errorHandler = (err, req, res, next) => {
   if (err.message === 'jwt expired') {
     error = new ErrorResponse(error.message, 401);
   }
+
+  if (err.name === 'JsonWebTokenError') {
+    error = new ErrorResponse(error.message, 401);
+  }
+
   console.log(`${req.hostname}${req.url}`, error);
   res.status(error.statusCode || 500).json({
     sucess: false,

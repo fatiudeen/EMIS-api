@@ -5,7 +5,7 @@ const RequestSchema = new mongoose.Schema(
   {
     to: {
       type: mongoose.Schema.Types.ObjectId,
-      refPath: 'Department',
+      ref: 'Department',
       required: true,
     },
 
@@ -142,6 +142,54 @@ const MailSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const ConversationSchema = new mongoose.Schema(
+  {
+    recipients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    lastMessage: {
+      type: String,
+    },
+    alias: {
+      type: String,
+    },
+    group: {
+      type: Boolean,
+    },
+  },
+  { timestamps: true }
+);
+
+const MessageSchema = new mongoose.Schema(
+  {
+    conversation: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'conversations',
+    },
+    to: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    from: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    message: {
+      body: {
+        type: String,
+        required: false,
+      },
+      attachment: [
+        {
+          type: String,
+          required: false,
+        },
+      ],
+    },
+  },
+  { timestamps: true }
+);
+
 MailSchema.pre('find', async function (next) {
   this.populate('to from');
   this.sort({ createdAt: -1 });
@@ -173,6 +221,22 @@ RequestSchema.pre('findOne', async function (next) {
   next();
 });
 
-export const Mail = mongoose.model('mail', MailSchema);
+// ConversationSchema.pre('find', async function (next) {
+//   this.populate('to from');
+//   this.sort({ createdAt: -1 });
+//   next();
+// });
+// MessageSchema.pre('findById', async function (next) {
+//   this.populate('to from');
+//   next();
+// });
 
-export const Request = mongoose.model('request', RequestSchema);
+const Mail = mongoose.model('mail', MailSchema);
+
+const Request = mongoose.model('request', RequestSchema);
+
+const Conversation = mongoose.model('conversation', ConversationSchema);
+
+const Message = mongoose.model('message', MessageSchema);
+
+export { Message, Conversation, Mail, Request };

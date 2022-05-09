@@ -16,15 +16,26 @@ export default {
     // if (data.to === data.from) {
     //   throw new ErrorResponse('Forbbidden: cannot select this Department', 403);
     // }
-    if (user.role !== 'Registry') {
-      data._to = department._id;
-      data.to = undefined;
-      data.metaData.forward = [user._id];
-    } else {
-      data.to = department._id;
-    }
+    // if (user.role !== 'Registry') {
+    //   data._to = department._id;
+    //   data.to = undefined;
+    //   lod
+    const time = Date.now();
 
-    return await Service.create(Request, data);
+    let _req = new Request(data);
+    _req.metaData.forward = [user._id];
+    _req.metaData.seen.push({
+      by: user._id,
+      date: time,
+      read: false,
+    });
+    // } else {
+    _req.to = department._id;
+    _req._to = department._id;
+    // }
+    let result = await _req.save();
+    return result;
+    // return await Service.create(Request, data);
   },
 
   deleteRequest: async (id) => {

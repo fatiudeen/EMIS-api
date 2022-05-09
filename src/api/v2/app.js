@@ -36,8 +36,12 @@ app.use(cors(corsOptions));
 // });
 
 //Routes
-app.use('/api/upload', protect('User'), express.static(__dirname + '/upload'));
-app.use('/api/avi', express.static(__dirname + '/avi'));
+app.use(
+  '/api/upload',
+  protect('User'),
+  express.static(__dirname + '/../../../upload')
+);
+app.use('/api/avi', express.static(__dirname + '/../../../avi'));
 app.use('/api', authRoute);
 app.use('/api/admin', protect('Admin'), adminRoute);
 app.use('/api/user', protect('User'), userRoute);

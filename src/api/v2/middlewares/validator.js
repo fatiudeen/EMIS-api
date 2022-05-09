@@ -18,7 +18,8 @@ export const validator = (req, res, next) => {
         }
       });
     }
-    return res.status(400).json(error);
+    console.log(error);
+    throw new ErrorResponse('Input Validation Error', 400);
   }
   next();
 };
