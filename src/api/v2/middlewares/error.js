@@ -30,4 +30,10 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-export { errorHandler };
+const error404 = (req, res) => {
+  res.status(500).json({
+    status: 'Sorry Route does not exists',
+  });
+};
+
+export { errorHandler, error404 };

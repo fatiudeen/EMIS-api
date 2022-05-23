@@ -4,6 +4,7 @@ import User from '../models/User.model.js';
 import Service from './Service.js';
 import mongoose from 'mongoose';
 import mailService from './mail.service.js';
+import requestService from './request.service.js';
 
 export default {
   createUser: async (data) => {
@@ -82,7 +83,7 @@ export default {
       }).select('+password');
 
       if (!randomUser) {
-        randomUser = new user({
+        randomUser = new User({
           username,
           name: 'DHQ USER',
           password: defaultPassword,
@@ -98,7 +99,7 @@ export default {
 
       data.to = 'support@ADMIN';
 
-      let mail = await mailService.createMail(data);
+      let mail = await requestService.createRequest(data);
       return mail;
     } catch (error) {
       throw new ErrorResponse(error);

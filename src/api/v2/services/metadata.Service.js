@@ -1,15 +1,14 @@
 import { ErrorResponse } from '../helpers/response.js';
 import User from '../models/User.model.js';
-import { Request, Mail } from '../models/Messages.model.js';
+import { Request } from '../models/Messages.model.js';
 import mongoose from 'mongoose';
 import DepartmentModel from '../models/Department.model.js';
 
 export default {
   forwardRequest: async (data) => {
     try {
-      let Model = this.model(data.type);
       let _user = await User.find({ _id: data.id });
-      let _req = await Model.findById(data.requestId);
+      let _req = await Request.findById(data.requestId);
       let file;
       const time = Date.now();
 
@@ -47,9 +46,7 @@ export default {
   },
   seen: async (data) => {
     try {
-      let Model = this.model(data.type);
-
-      let _req = await Model.findById(data.requestId);
+      let _req = await Request.findById(data.requestId);
       let doc = _req.metaData.seen.find((val) => {
         return val.by.toString() == data.user._id.toString();
       });
@@ -68,9 +65,7 @@ export default {
   },
   minute: async (data) => {
     try {
-      let Model = this.model(data.type);
-
-      let _req = await Model.findById(data.requestId);
+      let _req = await Request.findById(data.requestId);
       const time = Date.now();
       _req.metaData.minute.push({
         by: data.user._id,
@@ -85,9 +80,7 @@ export default {
   },
   status: async (data) => {
     try {
-      let Model = this.model(data.type);
-
-      let _req = await Model.findById(data.requestId);
+      let _req = await Request.findById(data.requestId);
       _req.metaData.status = data.status;
 
       await _req.save();
@@ -95,11 +88,5 @@ export default {
     } catch (error) {
       throw new ErrorResponse(error);
     }
-  },
-  model: (type) => {
-    if (type === true) {
-      return Mail;
-    }
-    return Request;
   },
 };

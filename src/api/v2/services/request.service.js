@@ -2,6 +2,9 @@ import { ErrorResponse } from '../helpers/response.js';
 import { Request } from '../models/Messages.model.js';
 import Service from './Service.js';
 import departmentService from './department.service.js';
+import UserModel from '../models/User.model.js';
+import sendService from './send.service.js';
+import DepartmentModel from '../models/Department.model.js';
 
 export default {
   createRequest: async (data, user) => {
@@ -16,10 +19,12 @@ export default {
     // if (data.to === data.from) {
     //   throw new ErrorResponse('Forbbidden: cannot select this Department', 403);
     // }
-    // if (user.role !== 'Registry') {
-    //   data._to = department._id;
-    //   data.to = undefined;
-    //   lod
+    if (user.role !== 'Registry') {
+      data._to = false;
+      // data.to = undefined;
+    } else {
+      data._to = true;
+    }
     const time = Date.now();
 
     let _req = new Request(data);
@@ -38,7 +43,12 @@ export default {
     // return await Service.create(Request, data);
   },
 
-  deleteRequest: async (id) => {
+  deleteRequest: async (id, user) => {
+    const _req = await Service.findOne(Request, id);
+    if (_req.from.toString() !== user.toString()) {
+      throw new ErrorResponse('cannot delete a task you did not request', 404);
+    }
+
     return await Service.delete(Request, id);
   },
 
@@ -53,9 +63,9 @@ export default {
   updateRequest: async (data) => {
     return await Service.update(Request, id, data);
   },
-  getMyRequest: async (data, data1) => {
+  getMyRequest: async (data) => {
     try {
-      let request = await Request.find().or([data, data1]);
+      let request = await Request.find().or([...data]);
       return request;
     } catch (error) {
       throw new ErrorResponse(error);
@@ -64,10 +74,58 @@ export default {
   approveRequest: async (id) => {
     try {
       let request = await Request.findById(id);
-      request.to = request._to;
-      request._to = undefined;
+      request._to = true;
       let result = await request.save();
       return result;
+    } catch (error) {
+      throw new ErrorResponse(error);
+    }
+  },
+  supportMail: async (data) => {
+    try {
+      let _user = await UserModel.findOne({ username: 'support@ADMIN' });
+      data.to = _user._id;
+
+      let _mail = await Request.create(data);
+      return _mail;
+    } catch (error) {
+      throw new ErrorResponse(error);
+    }
+  },
+  broadcast: async (requestId, user, note, userRequset) => {
+    try {
+      let request = await Request.findById(requestId)
+      let data = {};
+      let num = 0
+      let result
+      if (userRequset){
+        let members = await UserModel.find({department: user.department})
+        data.from = user._id;
+        data.message = {
+          body: `${note} | ${request.title} | ${request.message.body}`,
+          attachment: request.message.attachment,
+        };
+        note ? '' : note;
+        members.forEach(val=>{
+          data.to = val._id
+          await sendService.create(data)
+          num = num+1
+        })
+      result = {usersBroadcastedTo: num, message: request}
+
+      } else {
+        request.from = user.department
+        if (note)
+          request.message.text = `${request.message.body} | ${note}`
+        let department = await DepartmentModel.find()
+        department.forEach(val=>{
+          request.to = val.abbr
+          await this.createRequest(request, user)
+          num = num+1
+        })
+        result = {departmentsBroadcastedTo: num, message: request}
+      }
+      return result
     } catch (error) {
       throw new ErrorResponse(error);
     }

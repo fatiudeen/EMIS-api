@@ -24,12 +24,13 @@ export default (role) => {
       }
       req.user = user;
 
-      // if (role === 'Admin') {
-      //   role == user.role
-      //     ? next()
-      //     : next(new ErrorResponse(constants.MESSAGES.UNAUTHORIZED, 401));
-      // }
-      next();
+      if (role === 'Admin') {
+        if (role == user.role) {
+          return next();
+        }
+        throw new ErrorResponse(constants.MESSAGES.UNAUTHORIZED, 401);
+      }
+      return next();
     } catch (error) {
       next(error);
     }

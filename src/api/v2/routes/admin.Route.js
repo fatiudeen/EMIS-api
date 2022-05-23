@@ -1,90 +1,57 @@
 import express from 'express';
-import {
-  registerUser,
-  deleteUser,
-  changePassword,
-  updateUser,
-  getUsers,
-  getUser,
-  getUsersFromDept,
-} from '../controllers/user.controller.js';
-
-import {
-  createDept,
-  deleteDept,
-  allDepts,
-  getOneDept,
-} from '../controllers/department.controller.js';
-
-import {
-  sendMail,
-  sendRequest,
-  getAllMails,
-  getAllRequests,
-  getOneMail,
-  getOneRequest,
-} from '../controllers/message.controller.js';
+import userController from '../controllers/user.controller.js';
+import departmentController from '../controllers/department.controller.js';
+import taskController from '../controllers/task.controller.js';
 import { upload } from '../helpers/upload.js';
 import { validator } from '../middlewares/validator.js';
 import adminValidator from '../validators/admin.validator.js';
 
 const router = express.Router();
+
 //manage department
 router.post(
   '/dept/create',
   adminValidator.createDepartment,
   validator,
-  createDept
+  departmentController.create
 );
-
-router.get('/dept', allDepts);
-
-router.get('/dept/:id/users', getUsersFromDept);
-
-router.get('/dept/:id', getOneDept);
-
-router.delete('/dept/:id/delete', deleteDept);
+router.get('/dept', departmentController.getAll);
+router.get('/dept/:id/users', userController.getUsersFromDept);
+router.get('/dept/:id', departmentController.getOne);
+router.delete('/dept/:id/delete', departmentController.delete);
 
 //manage user
-router.get('/users', getUsers);
-
-router.get('/users/:id', getUser);
-
+router.get('/users', userController.getUsers);
+router.get('/users/:id', userController.get);
 router.post(
   '/users/create',
   adminValidator.createUser,
   validator,
-  registerUser
+  userController.create
 );
-
 router.delete('/users/:id/delete', deleteUser);
-
 router.patch(
   '/users/:id/password',
   adminValidator.password,
   validator,
-  changePassword
+  userController.updatePassword
 );
-
 router.patch(
   '/users/:id/update',
   adminValidator.updateUser,
   validator,
-  updateUser
+  userController.update
 );
 
 //request
-router.post('/request', adminValidator.request, validator, upload, sendRequest);
-
-router.get('/request', getAllRequests);
-
-router.get('/request/:requestId', getOneRequest);
-
-// mail
-router.post('/mail', upload, adminValidator.mail, validator, upload, sendMail);
-
-router.get('/mail', getAllMails);
-
-router.get('/mail/:mailId', getOneMail);
+router.post(
+  '/request',
+  adminValidator.request,
+  validator,
+  upload,
+  taskController.tasks.send
+);
+router.get('/request', taskController.tasks.getAll);
+router.get('/request/:requestId', taskController.tasks.getOne);
 
 export default router;

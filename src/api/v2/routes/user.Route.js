@@ -1,40 +1,7 @@
 import express from 'express';
-import {
-  getUser,
-  updateUser,
-  changePassword,
-  newAvatar,
-  deleteAvatar,
-  getUsersFromDept,
-  findMany,
-  getDeptAndUsers,
-} from '../controllers/user.controller.js';
-
-import { allDepts, getOneDept } from '../controllers/department.controller.js';
-
-import {
-  sendMail,
-  sendRequest,
-  getAllMails,
-  getAllRequests,
-  getOneMail,
-  getOneRequest,
-  logs,
-  seen,
-  minute,
-  status,
-  forwardRequest,
-  send,
-  sendGroup,
-  getConversations,
-  getMessages,
-  renameGroup,
-  addUserToGroup,
-  removeFromGroup,
-  leaveGroup,
-  approveRequest,
-  createGroup,
-} from '../controllers/message.controller.js';
+import userController from '../controllers/user.controller.js';
+import departmentController from '../controllers/department.controller.js';
+import taskController from '../controllers/task.controller.js';
 import { upload, avatar } from '../helpers/upload.js';
 import userValidator from '../validators/user.validator.js';
 import { validator } from '../middlewares/validator.js';
@@ -42,52 +9,76 @@ import { validator } from '../middlewares/validator.js';
 const router = express.Router();
 
 //manage user data
-router.get('/user', getUser);
-router.patch('/profile/update', userValidator.update, validator, updateUser);
+router.get('/user', userController.create);
+router.patch(
+  '/profile/update',
+  userValidator.update,
+  validator,
+  userController.update
+);
 router.post(
   '/profile/avatar',
   avatar,
   // userValidator.avatar,
   // validator,
-  newAvatar
+  userController.newAvatar
 );
-router.delete('/profile/avatar', deleteAvatar);
+router.delete('/profile/avatar', userController.deleteAvatar);
 router.patch(
   '/profile/password',
   userValidator.password,
   validator,
-  changePassword
+  userController.updatePassword
 );
-router.post('/findmany', userValidator.findMany, validator, findMany);
+router.post(
+  '/findmany',
+  userValidator.findMany,
+  validator,
+  userController.findMany
+);
 
 //request
-router.post('/request', upload, userValidator.request, validator, sendRequest);
-router.get('/request', getAllRequests);
-router.get('/request/:requestId', getOneRequest);
-router.get('/department', allDepts);
-router.get('/department/:id', getOneDept);
-router.get('/request/forward/:id/:requestId', forwardRequest);
-router.get('/request/approve/:requestId', approveRequest);
+router.post(
+  '/request',
+  upload,
+  userValidator.request,
+  validator,
+  taskController.tasks.send
+);
+router.get('/request', taskController.tasks.getAll);
+router.get('/request/:requestId', taskController.tasks.getOne);
+router.get('/department', departmentController.getAll);
+router.get('/department/:id', departmentController.getOne);
+router.get(
+  '/request/forward/:id/:requestId',
+  taskController.metaData.forwardRequest
+);
+router.get(
+  '/request/approve/:requestId',
+  taskController.metaData.approveRequest
+);
 
-//mail
-router.post('/mail', upload, userValidator.mail, validator, sendMail);
-router.get('/mail', getAllMails);
-router.get('/mail/:mailId', getOneMail);
-router.get('/users', getUsersFromDept);
-router.get('/users/:id', getUser);
+router.get('/users', userController.getUsersFromDept);
+router.get('/users/:id', userController.get);
 
 // send
-router.post('/convo', upload, userValidator.conversation, validator, send);
+router.post(
+  '/convo',
+  upload,
+  userValidator.conversation,
+  validator,
+  taskController.convo.personal.send
+);
 router.post(
   '/convo-new-group',
-  /*userValidator.newGroup, validator,*/ createGroup
+  /*userValidator.newGroup, validator,*/ taskController.convo.group.createGroup
 );
 router.post(
   '/convo-group/:groupConvoId',
   upload,
   userValidator.conversationGroup,
   validator,
-  sendGroup
+  taskController.convo.group.send
 );
 
 router.get('/convo', getConversations);
@@ -96,19 +87,25 @@ router.patch(
   '/convo/:convoId',
   userValidator.renameGroup,
   validator,
-  renameGroup
+  taskController.convo.group.renameGroup
 );
-router.get('/convo/:convoId/:userId', addUserToGroup);
-router.delete('/convo/:convoId/:userId', removeFromGroup);
-router.delete('/convo/:convoId', leaveGroup);
-router.get('/all', getDeptAndUsers);
+router.get(
+  '/convo/:convoId/:userId',
+  taskController.convo.group.addUserToGroup
+);
+router.delete(
+  '/convo/:convoId/:userId',
+  taskController.convo.group.removeFromGroup
+);
+router.delete('/convo/:convoId', taskController.convo.group.leaveGroup);
+router.get('/all', userController.userDepartmentAggregate);
 
 //logs
-router.get('/logs', logs);
+router.get('/logs', taskController.logs.get);
 
 // metadata
-router.get('/metadata/:requestId/', seen);
-router.post('/metadata/:requestId', minute); //comment
-router.get('/metadata/:requestId/:status', status);
+router.get('/metadata/:requestId/', taskController.metaData.seen);
+router.post('/metadata/:requestId', taskController.metaData.minute);
+router.get('/metadata/:requestId/:status', taskController.metaData.status);
 
 export default router;
