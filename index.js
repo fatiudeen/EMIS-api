@@ -7,4 +7,4 @@ import config from './src/config/config.js';
 
 const IP = /**process.env.IP || */ '127.0.0.1';
 const PORT = config.port;
-app.listen(PORT, IP, () => console.log(`Server running on ${IP}:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on ${IP}:${PORT}`));
