@@ -29,7 +29,7 @@ router.post(
   validator,
   userController.create
 );
-router.delete('/users/:id/delete', deleteUser);
+router.delete('/users/:id/delete', userController.deleteUser);
 router.patch(
   '/users/:id/password',
   adminValidator.password,

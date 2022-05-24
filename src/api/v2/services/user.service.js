@@ -3,7 +3,6 @@ import { ErrorResponse } from '../helpers/response.js';
 import User from '../models/User.model.js';
 import Service from './Service.js';
 import mongoose from 'mongoose';
-import mailService from './mail.service.js';
 import requestService from './request.service.js';
 
 export default {

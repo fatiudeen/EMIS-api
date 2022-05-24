@@ -94,38 +94,36 @@ export default {
   },
   broadcast: async (requestId, user, note, userRequset) => {
     try {
-      let request = await Request.findById(requestId)
+      let request = await Request.findById(requestId);
       let data = {};
-      let num = 0
-      let result
-      if (userRequset){
-        let members = await UserModel.find({department: user.department})
+      let num = 0;
+      let result;
+      if (userRequset) {
+        let members = await UserModel.find({ department: user.department });
         data.from = user._id;
         data.message = {
           body: `${note} | ${request.title} | ${request.message.body}`,
           attachment: request.message.attachment,
         };
         note ? '' : note;
-        members.forEach(val=>{
-          data.to = val._id
-          await sendService.create(data)
-          num = num+1
-        })
-      result = {usersBroadcastedTo: num, message: request}
-
+        members.forEach(async (val) => {
+          data.to = val._id;
+          await sendService.create(data);
+          num = num + 1;
+        });
+        result = { usersBroadcastedTo: num, message: request };
       } else {
-        request.from = user.department
-        if (note)
-          request.message.text = `${request.message.body} | ${note}`
-        let department = await DepartmentModel.find()
-        department.forEach(val=>{
-          request.to = val.abbr
-          await this.createRequest(request, user)
-          num = num+1
-        })
-        result = {departmentsBroadcastedTo: num, message: request}
+        request.from = user.department;
+        if (note) request.message.text = `${request.message.body} | ${note}`;
+        let department = await DepartmentModel.find();
+        department.forEach(async (val) => {
+          request.to = val.abbr;
+          await this.createRequest(request, user);
+          num = num + 1;
+        });
+        result = { departmentsBroadcastedTo: num, message: request };
       }
-      return result
+      return result;
     } catch (error) {
       throw new ErrorResponse(error);
     }

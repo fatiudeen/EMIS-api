@@ -81,8 +81,8 @@ router.post(
   taskController.convo.group.send
 );
 
-router.get('/convo', getConversations);
-router.get('/convo/:convoId', getMessages);
+router.get('/convo', taskController.convo.get);
+router.get('/convo/:convoId', taskController.convo.getMessages);
 router.patch(
   '/convo/:convoId',
   userValidator.renameGroup,
