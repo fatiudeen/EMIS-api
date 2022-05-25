@@ -94,10 +94,10 @@ export default {
       }
       data =
         req.query.ref === 'sent'
-          ? [...data2]
+          ? [data2]
           : req.query.ref === 'received'
-          ? [...data1]
-          : [...data1, data2];
+          ? [data1]
+          : [data1, data2];
       try {
         let result = await requestService.getMyRequest(data);
         SuccessResponse.success(res, result);
