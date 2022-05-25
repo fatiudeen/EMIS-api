@@ -16,11 +16,11 @@ export default {
       !req.metaDataStatus
         ? false
         : Object.assign(data, {
-            'metaData.status': 'Completed',
+            'metaData.status': 'completed',
           });
       try {
         let data = requestParser.parseRequest(req);
-        data.docModel = req.query.ref === 'user' ? 'User' : 'Department';
+        data.onModel = req.query.ref === 'user' ? 'User' : 'Department';
 
         let result = await requestService.createRequest(data, req.user);
         req.io.emit('task', result);

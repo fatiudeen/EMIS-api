@@ -36,7 +36,6 @@ export default {
     });
     // } else {
     _req.to = department._id;
-    _req._to = department._id;
     // }
     let result = await _req.save();
     return result;

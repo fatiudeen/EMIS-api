@@ -71,7 +71,7 @@ const RequestSchema = new mongoose.Schema(
       status: {
         type: String,
         enum: ['progress', 'pending', 'completed'],
-        default: 'Pending',
+        default: 'pending',
       },
       forward: [
         {
