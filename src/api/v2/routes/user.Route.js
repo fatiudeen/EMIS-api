@@ -111,6 +111,6 @@ router.post('/metadata/:requestId', taskController.metaData.minute);
 router.get('/metadata/:requestId/:status', taskController.metaData.status);
 
 //support
-router.post('/support', taskController.support.send);
+// router.post('/support', taskController.support.send);
 
 export default router;
