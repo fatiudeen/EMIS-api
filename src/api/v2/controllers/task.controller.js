@@ -2,41 +2,10 @@ import requestService from '../services/request.service.js';
 import { SuccessResponse } from '../helpers/response.js';
 import metadataService from '../services/metadata.Service.js';
 import sendService from '../services/send.service.js';
+import requestParser from '../helpers/requestParser.js';
 
 // task mgmt
 export default {
-  helpers: {
-    parseRequest: (req) => {
-      let data = {};
-      let path = [];
-
-      if (req.files) {
-        req.files.map((file) => {
-          path.push(file.path);
-        });
-      }
-      req.body.alias ? (data.alias = req.body.alias) : false;
-      req.body.to ? (data.to = req.body.to) : false;
-      req.body.reference ? (data.reference = req.body.reference) : false;
-      req.body.title ? (data.title = req.body.title) : false;
-      data.from = req.taskType === 1 ? req.user.department : req.user._id;
-      data.message = {
-        body: req.body.text,
-        attachment: path,
-      };
-      return data;
-    },
-    parseMetadata: (req) => {
-      let data = {};
-      req.body.comment ? (data.comment = req.body.comment) : false;
-      data.user = req.user;
-      req.params.userId ? (data.id = req.params.userId) : false;
-      data.requestId = req.params.requestId;
-      req.params.status ? (data.status = req.params.status) : false;
-
-      return data;
-    },
-  },
   tasks: {
     /**
      * query: 'ref': 'user' || null
@@ -50,7 +19,7 @@ export default {
             'metaData.status': 'Completed',
           });
       try {
-        let data = this.helpers.parseRequest(req);
+        let data = requestParser.parseRequest(req);
         data.docModel = req.query.ref === 'user' ? 'User' : 'Department';
 
         let result = await requestService.createRequest(data, req.user);
@@ -168,7 +137,7 @@ export default {
      */
     forwardRequest: async (req, res, next) => {
       try {
-        let data = this.helpers.parseMetadata(req);
+        let data = requestParser.parseMetadata(req);
         let result = await metadataService.forwardRequest(data);
         SuccessResponse.success(res, result);
       } catch (error) {
@@ -180,7 +149,7 @@ export default {
      */
     seen: async (req, res, next) => {
       try {
-        let data = this.helpers.parseMetadata(req);
+        let data = requestParser.parseMetadata(req);
         let result = await metadataService.seen(data);
         SuccessResponse.success(res, result);
       } catch (error) {
@@ -193,7 +162,7 @@ export default {
      */
     minute: async (req, res, next) => {
       try {
-        let data = this.helpers.parseMetadata(req);
+        let data = requestParser.parseMetadata(req);
         let result = await metadataService.minute(data);
         SuccessResponse.success(res, result);
       } catch (error) {
@@ -206,7 +175,7 @@ export default {
      */
     status: async (req, res, next) => {
       try {
-        let data = this.helpers.parseMetadata(req);
+        let data = requestParser.parseMetadata(req);
         let result = await metadataService.status(data);
         SuccessResponse.success(res, result);
       } catch (error) {
@@ -234,7 +203,7 @@ export default {
      */
     send: async (req, res, next) => {
       try {
-        let data = this.helpers.parseRequest(req);
+        let data = requestParser.parseRequest(req);
         data._to = true;
 
         let result = await requestService.supportMail(data);
@@ -271,7 +240,7 @@ export default {
     personal: {
       send: async (req, res, next) => {
         try {
-          let data = this.helpers.parseRequest(req);
+          let data = requestParser.parseRequest(req);
           let result = await sendService.create(data);
           req.io.emit('convo', result);
           SuccessResponse.success(res, result);
@@ -286,7 +255,7 @@ export default {
        */
       createGroup: async (req, res, next) => {
         try {
-          let data = this.helpers.parseRequest(req);
+          let data = requestParser.parseRequest(req);
           let result = await sendService.createGroup(data);
           SuccessResponse.success(res, result);
         } catch (error) {
@@ -299,7 +268,7 @@ export default {
        */
       send: async (req, res, next) => {
         try {
-          let data = this.helpers.parseRequest(req);
+          let data = requestParser.parseRequest(req);
           let result = await sendService.sendGroup(
             data,
             req.params.groupConvoId
