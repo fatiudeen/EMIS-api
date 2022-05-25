@@ -97,6 +97,8 @@ export default {
     broadcast: async (req, res, next) => {
       // NEW
       try {
+        if (req.user.role !== 'Registry')
+          throw new ErrorResponse('not a registry account', 400);
         let userRequset = req.query.ref === 'user' ? true : false;
 
         let result = await requestService.broadcast(
@@ -187,6 +189,8 @@ export default {
      */
     approveRequest: async (req, res, next) => {
       try {
+        if (req.user.role !== 'Registry')
+          throw new ErrorResponse('not a registry account', 400);
         let id = req.params.requestId;
 
         let result = await requestService.approveRequest(id);

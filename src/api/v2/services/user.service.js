@@ -96,7 +96,7 @@ export default {
 
       data.from = randomUser._id;
 
-      data.to = 'support@ADMIN';
+      data.to = 'ADMIN';
 
       let mail = await requestService.createRequest(data);
       return mail;

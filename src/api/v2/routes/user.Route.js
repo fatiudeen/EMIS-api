@@ -57,6 +57,7 @@ router.get(
   '/request/approve/:requestId',
   taskController.metaData.approveRequest
 );
+router.post('/request/approve/:requestId', taskController.metaData.broadcast);
 
 router.get('/users', userController.getUsersFromDept);
 router.get('/users/:id', userController.get);
@@ -102,10 +103,14 @@ router.get('/all', userController.userDepartmentAggregate);
 
 //logs
 router.get('/logs', taskController.logs.get);
+router.post('/logs', taskController.logs.add);
 
 // metadata
 router.get('/metadata/:requestId/', taskController.metaData.seen);
 router.post('/metadata/:requestId', taskController.metaData.minute);
 router.get('/metadata/:requestId/:status', taskController.metaData.status);
+
+//support
+router.post('/support', taskController.support.send);
 
 export default router;
