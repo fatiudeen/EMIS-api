@@ -9,7 +9,7 @@ import { validator } from '../middlewares/validator.js';
 const router = express.Router();
 
 //manage user data
-router.get('/user', userController.create);
+router.get('/user', userController.get);
 router.patch(
   '/profile/update',
   userValidator.update,
