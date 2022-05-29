@@ -12,26 +12,23 @@ export default {
     if (request) {
       throw new ErrorResponse('Request Exists', 409);
     }
-    let _to;
-    let _from;
-    if (data.onModel === 'User') {
-      _to = await UserModel.findOne({ username: data.to });
-      _from = user._id;
-      if (!_to) throw new ErrorResponse('Invalid User', 404);
-    } else {
-      _to = await departmentService.getDepartment({ abbr: data.to });
-      if (!_to) throw new ErrorResponse('Invalid Department', 404);
-      _from = user.department;
-    }
-
-    // if (data.to === data.from) {
-    //   throw new ErrorResponse('Forbbidden: cannot select this Department', 403);
-    // }
     if (user.role !== 'Registry') {
       data._to = false;
       // data.to = undefined;
     } else {
       data._to = true;
+    }
+    let _to;
+    let _from;
+    if (data.onModel === 'User') {
+      _to = await UserModel.findOne({ username: data.to });
+      _from = user._id;
+      data._to = true;
+      if (!_to) throw new ErrorResponse('Invalid User', 404);
+    } else {
+      _to = await departmentService.getDepartment({ abbr: data.to });
+      if (!_to) throw new ErrorResponse('Invalid Department', 404);
+      _from = user.department;
     }
     const time = Date.now();
 
