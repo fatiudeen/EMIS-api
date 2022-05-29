@@ -134,20 +134,20 @@ const MessageSchema = new mongoose.Schema(
 
 RequestSchema.pre('find', async function (next) {
   this.populate('to from');
-  this.select('-_to -forward -onModel');
+  this.select('-_to -forward');
   this.sort({ createdAt: -1 });
   next();
 });
 
 RequestSchema.pre('findById', async function (next) {
   this.populate('to from');
-  this.select('-_to -forward -onModel');
+  this.select('-_to -forward');
   next();
 });
 
 RequestSchema.pre('findOne', async function (next) {
   this.populate('to from');
-  this.select('-_to -forward -onModel');
+  this.select('-_to -forward');
   next();
 });
 
