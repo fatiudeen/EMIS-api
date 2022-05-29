@@ -84,69 +84,6 @@ const RequestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// const MailSchema = new mongoose.Schema(
-//   {
-//     to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-
-//     from: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: 'User',
-//       required: true,
-//     },
-
-//     title: {
-//       type: String,
-//       required: true,
-//     },
-
-//     message: {
-//       body: {
-//         type: String,
-//         required: false,
-//       },
-//       attachment: [
-//         {
-//           type: String,
-//           required: false,
-//         },
-//       ],
-//     },
-
-//     metaData: {
-//       seen: [
-//         {
-//           by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-//           date: {
-//             type: Date,
-//           },
-//           read: { type: Boolean },
-//         },
-//       ],
-//       minute: [
-//         {
-//           by: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-//           date: {
-//             type: Date,
-//           },
-//           comment: { type: String },
-//         },
-//       ],
-//       status: {
-//         type: String,
-//         enum: ['Progress', 'Pending', 'Completed'],
-//         default: 'Pending',
-//       },
-//       forward: [
-//         {
-//           type: mongoose.Schema.Types.ObjectId,
-//           ref: 'User',
-//         },
-//       ],
-//     },
-//   },
-//   { timestamps: true }
-// );
-
 const ConversationSchema = new mongoose.Schema(
   {
     recipients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -195,50 +132,24 @@ const MessageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// MailSchema.pre('find', async function (next) {
-//   this.populate('to from');
-//   this.sort({ createdAt: -1 });
-
-//   next();
-// });
-
 RequestSchema.pre('find', async function (next) {
   this.populate('to from');
+  this.select('-_to -forward -onModel');
   this.sort({ createdAt: -1 });
   next();
 });
-// MailSchema.pre('findById', async function (next) {
-//   this.populate('to from');
-//   next();
-// });
 
 RequestSchema.pre('findById', async function (next) {
   this.populate('to from');
-  this.select('-_to -forward');
+  this.select('-_to -forward -onModel');
   next();
 });
-// MailSchema.pre('findOne', async function (next) {
-//   this.populate('to from');
-//   next();
-// });
 
 RequestSchema.pre('findOne', async function (next) {
   this.populate('to from');
-  this.select('-_to -forward');
+  this.select('-_to -forward -onModel');
   next();
 });
-
-// ConversationSchema.pre('find', async function (next) {
-//   this.populate('to from');
-//   this.sort({ createdAt: -1 });
-//   next();
-// });
-// MessageSchema.pre('findById', async function (next) {
-//   this.populate('to from');
-//   next();
-// });
-
-// const Mail = mongoose.model('mail', MailSchema);
 
 const Request = mongoose.model('request', RequestSchema);
 
