@@ -13,12 +13,15 @@ export default {
       throw new ErrorResponse('Request Exists', 409);
     }
     let _to;
+    let _from;
     if (data.onModel === 'User') {
       _to = await UserModel.findOne({ username: data.to });
+      _from = user._id;
       if (!_to) throw new ErrorResponse('Invalid User', 404);
     } else {
       _to = await departmentService.getDepartment({ abbr: data.to });
       if (!_to) throw new ErrorResponse('Invalid Department', 404);
+      _from = user.department;
     }
 
     // if (data.to === data.from) {
@@ -41,6 +44,7 @@ export default {
     });
     // } else {
     _req.to = _to._id;
+    _req.from = _from;
     // }
     let result = await _req.save();
     return result;
