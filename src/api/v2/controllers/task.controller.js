@@ -22,7 +22,6 @@ export default {
       try {
         let data = requestParser.parseRequest(req);
         data.onModel = model;
-
         let result = await requestService.createRequest(data, req.user);
         req.io.emit('task', result);
         SuccessResponse.success(res, result);

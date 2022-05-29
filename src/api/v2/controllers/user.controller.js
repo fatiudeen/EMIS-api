@@ -75,7 +75,7 @@ export default {
     data.username = `${req.body.username}@${req.body.department.toUpperCase()}`;
     data.name = req.body.name;
     data.rank = req.body.rank;
-    data.avi = 'avi/placeholder.png';
+    data.avatar = 'avi/placeholder.png';
 
     try {
       const user = await userService.getUser({ username: data.username });

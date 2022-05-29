@@ -17,7 +17,7 @@ export default {
       _to = await UserModel.findOne({ username: data.to });
       if (!_to) throw new ErrorResponse('Invalid User', 404);
     } else {
-      let _to = await departmentService.getDepartment({ abbr: data.to });
+      _to = await departmentService.getDepartment({ abbr: data.to });
       if (!_to) throw new ErrorResponse('Invalid Department', 404);
     }
 
