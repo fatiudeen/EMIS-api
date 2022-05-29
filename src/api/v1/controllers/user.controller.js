@@ -85,6 +85,7 @@ export const registerUser = async (req, res, next) => {
       throw new ErrorResponse('Department does not exist', 400);
     }
     data.department = dept._id;
+    data.avatar = 'avi/placeholder.png';
 
     let result = await userService.createUser(data);
     SuccessResponse.success(res, result);

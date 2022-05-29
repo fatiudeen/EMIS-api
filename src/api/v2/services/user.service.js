@@ -40,6 +40,7 @@ export default {
     try {
       let user = await User.findById(id).select('+password');
       let match = await user.comparePasswords(oldPassword);
+      console.log(match);
       if (!match) {
         throw new ErrorResponse(constants.MESSAGES.PASSWORD_MATCH_ERROR);
       }

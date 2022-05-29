@@ -12,10 +12,14 @@ export default {
     if (request) {
       throw new ErrorResponse('Request Exists', 409);
     }
-    let department = await departmentService.getDepartment({ abbr: data.to });
-    if (!department) {
-      throw new ErrorResponse('Invalid Department', 404);
+    if (data.onModel === 'User') {
+      let _user = await UserModel.findOne({ username: data.to });
+      if (!_user) throw new ErrorResponse('Invalid User', 404);
+    } else {
+      let department = await departmentService.getDepartment({ abbr: data.to });
+      if (!department) throw new ErrorResponse('Invalid Department', 404);
     }
+
     // if (data.to === data.from) {
     //   throw new ErrorResponse('Forbbidden: cannot select this Department', 403);
     // }

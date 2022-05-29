@@ -16,7 +16,7 @@ export default {
         // throw error if passwords do not match
         throw new Error("Passwords don't match");
       } else {
-        return value;
+        return true;
       }
     }),
   ],
