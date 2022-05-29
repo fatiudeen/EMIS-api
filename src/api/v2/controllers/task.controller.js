@@ -12,7 +12,8 @@ export default {
      * body: 'to' 'title' 'reference' 'text' 'attachment'
      */
     send: async (req, res, next) => {
-      req.taskType = 1;
+      let model = req.query.ref === 'user' ? 'User' : 'Department';
+      req.taskType = model === 'user' ? 2 : 1;
       !req.metaDataStatus
         ? false
         : Object.assign(data, {
@@ -20,7 +21,7 @@ export default {
           });
       try {
         let data = requestParser.parseRequest(req);
-        data.onModel = req.query.ref === 'user' ? 'User' : 'Department';
+        data.onModel = model;
 
         let result = await requestService.createRequest(data, req.user);
         req.io.emit('task', result);
