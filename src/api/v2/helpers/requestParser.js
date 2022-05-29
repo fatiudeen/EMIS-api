@@ -12,7 +12,11 @@ export default {
     req.body.to ? (data.to = req.body.to) : false;
     req.body.reference ? (data.reference = req.body.reference) : false;
     req.body.title ? (data.title = req.body.title) : false;
-    data.from = req.taskType === 1 ? req.user.department : req.user._id;
+    req.taskType
+      ? req.taskType === 1
+        ? (data.from = req.user.department)
+        : (data.from = req.user._id)
+      : false;
     data.message = {
       body: req.body.text,
       attachment: path,
