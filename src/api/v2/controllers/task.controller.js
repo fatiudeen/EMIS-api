@@ -59,12 +59,14 @@ export default {
         };
         data2 = { 'metaData.forward': req.user._id, from: req.user.department };
       }
+      let data3 = { to: req.user._id };
+      let data4 = { from: req.user._id };
       data =
         req.query.ref === 'sent'
           ? [data2]
           : req.query.ref === 'received'
           ? [data1]
-          : [data1, data2];
+          : [data1, data2, data3, data4];
       try {
         let result = await requestService.getMyRequest(data);
         SuccessResponse.success(res, result);
