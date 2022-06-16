@@ -115,7 +115,7 @@ export default {
     try {
       let convo = await Conversation.find()
         .in('recipients', [id])
-        .sort({ updatedAt: -1 });
+        .sort({ updatedAt: 1 });
 
       convo.map(async (val) => {
         if (!val.group) {
