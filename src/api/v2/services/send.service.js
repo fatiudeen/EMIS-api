@@ -104,7 +104,7 @@ export default {
   getMessages: async (conversationId) => {
     try {
       let message = await Message.find({ conversation: conversationId }).sort({
-        createdAt: -1,
+        createdAt: 1,
       });
       return message;
     } catch (error) {
@@ -115,7 +115,7 @@ export default {
     try {
       let convo = await Conversation.find()
         .in('recipients', [id])
-        .sort({ updatedAt: 1 });
+        .sort({ updatedAt: -1 });
 
       convo.map(async (val) => {
         if (!val.group) {

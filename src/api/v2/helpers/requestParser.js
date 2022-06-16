@@ -24,6 +24,7 @@ export default {
     req.body.comment ? (data.comment = req.body.comment) : false;
     data.user = req.user;
     req.params.userId ? (data.id = req.params.userId) : false;
+    req.params.id ? (data.id = req.params.id) : false;
     data.requestId = req.params.requestId;
     req.params.status ? (data.status = req.params.status) : false;
 

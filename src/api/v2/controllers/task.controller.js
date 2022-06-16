@@ -140,7 +140,9 @@ export default {
     forwardRequest: async (req, res, next) => {
       try {
         let data = requestParser.parseMetadata(req);
+        console.log(data);
         let result = await metadataService.forwardRequest(data);
+
         SuccessResponse.success(res, result);
       } catch (error) {
         next(error);

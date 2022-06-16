@@ -11,6 +11,7 @@ export default {
       let _req = await Request.findById(data.requestId);
       let file;
       const time = Date.now();
+      console.log(data);
 
       if (!_user || !_req) {
         throw new ErrorResponse('user or dept error', 404);
