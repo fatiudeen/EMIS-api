@@ -101,17 +101,21 @@ export default {
       throw new ErrorResponse(error);
     }
   },
-  getMessages: async (conversationId) => {
+  getMessages: async (conversationId, userId) => {
     try {
       let message = await Message.find({ conversation: conversationId }).sort({
         createdAt: 1,
       });
+      await Message.updateMany(
+        { conversation: conversationId, seen: { $nin: [userId] } },
+        { $push: { seen: userId } }
+      );
       return message;
     } catch (error) {
       throw new ErrorResponse(error);
     }
   },
-  getConversations: async (id) => {
+  getConversations: async (id, userId) => {
     try {
       let convo = await Conversation.find()
         .in('recipients', [id])
@@ -127,7 +131,18 @@ export default {
         }
       });
 
-      return convo;
+      const result = await Promise.all(
+        convo.map(async (val) => {
+          const count = await Message.countDocuments({
+            conversation: val._id,
+            seen: { $nin: [userId] },
+          });
+          val.unreadMessages = count;
+          return val;
+        })
+      );
+
+      return result;
     } catch (error) {
       throw new ErrorResponse(error);
     }

@@ -140,7 +140,6 @@ export default {
     forwardRequest: async (req, res, next) => {
       try {
         let data = requestParser.parseMetadata(req);
-        console.log(data);
         let result = await metadataService.forwardRequest(data);
 
         SuccessResponse.success(res, result);
@@ -223,7 +222,10 @@ export default {
   convo: {
     get: async (req, res, next) => {
       try {
-        let result = await sendService.getConversations(req.user._id);
+        let result = await sendService.getConversations(
+          req.user._id,
+          req.user._id
+        );
         SuccessResponse.success(res, result);
       } catch (error) {
         next(error);
@@ -234,7 +236,10 @@ export default {
      */
     getMessages: async (req, res, next) => {
       try {
-        let result = await sendService.getMessages(req.params.convoId);
+        let result = await sendService.getMessages(
+          req.params.convoId,
+          req.user._id
+        );
         SuccessResponse.success(res, result);
       } catch (error) {
         next(error);

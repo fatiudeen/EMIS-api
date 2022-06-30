@@ -96,6 +96,10 @@ const ConversationSchema = new mongoose.Schema(
     group: {
       type: Boolean,
     },
+    unreadMessages: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
@@ -128,6 +132,12 @@ const MessageSchema = new mongoose.Schema(
         },
       ],
     },
+    seen: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   { timestamps: true }
 );

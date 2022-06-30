@@ -11,7 +11,6 @@ export default {
       let _req = await Request.findById(data.requestId);
       let file;
       const time = Date.now();
-      console.log(data);
 
       if (!_user || !_req) {
         throw new ErrorResponse('user or dept error', 404);
@@ -19,6 +18,7 @@ export default {
       let reg = _req.metaData.seen.find((val) => {
         return val.by.toString() == data.user._id.toString();
       });
+
       if (data.user.role == 'Registry' && reg == undefined) {
         _req.metaData.seen.push({
           by: data.user._id,
@@ -28,19 +28,22 @@ export default {
         _req.metaData.forward.push(data.user._id);
       }
       let result = _req.metaData.seen.find((val) => {
-        return val.by.toString() == data.id;
+        return val.by == data.id;
       });
-      if (result == undefined) {
-        _req.metaData.seen.push({
-          by: data.id,
-          date: time,
-          read: false,
-        });
-        _req.metaData.forward.push(data.id);
-
-        file = await _req.save();
-        return file;
+      if (result) {
+        throw new Error('user is already on the forwarded list');
       }
+      console.log(new mongoose.Types.ObjectId(data.id));
+
+      _req.metaData.seen.push({
+        by: new mongoose.Types.ObjectId(data.id),
+        date: time,
+        read: false,
+      });
+      _req.metaData.forward.push(new mongoose.Types.ObjectId(data.id));
+
+      file = await _req.save();
+      return file;
     } catch (error) {
       throw new ErrorResponse(error);
     }
