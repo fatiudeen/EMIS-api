@@ -121,16 +121,6 @@ export default {
         .in('recipients', [id])
         .sort({ updatedAt: -1 });
 
-      convo.map(async (val) => {
-        if (!val.group) {
-          let x = val.recipients.filter((vali) => {
-            return vali.toString() !== id.toString();
-          });
-          let user = await UserModel.findById(x[0]);
-          val.alias = user.name ? user.name : user.username;
-        }
-      });
-
       const result = await Promise.all(
         convo.map(async (val) => {
           const count = await Message.countDocuments({
@@ -138,6 +128,13 @@ export default {
             seen: { $nin: [userId] },
           });
           val.unreadMessages = count;
+          if (!val.group) {
+            let x = val.recipients.filter((vali) => {
+              return vali.toString() !== id.toString();
+            });
+            let user = await UserModel.findById(x[0]);
+            val.alias = user.name ? user.name : user.username;
+          }
           return val;
         })
       );

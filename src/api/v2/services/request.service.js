@@ -37,7 +37,7 @@ export default {
     _req.metaData.seen.push({
       by: user._id,
       date: time,
-      read: false,
+      read: true,
     });
     // } else {
     _req.to = _to._id;
