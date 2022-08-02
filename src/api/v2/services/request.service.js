@@ -18,6 +18,7 @@ export default {
     } else {
       data._to = true;
     }
+    let deptUser = null;
     let _to;
     let _from;
     if (data.onModel === 'User') {
@@ -28,6 +29,10 @@ export default {
     } else {
       _to = await departmentService.getDepartment({ abbr: data.to });
       if (!_to) throw new ErrorResponse('Invalid Department', 404);
+      deptUser = await UserModel.findOne({
+        role: 'Registry',
+        department: _to._id,
+      });
       _from = user.department;
     }
     const time = Date.now();
@@ -38,6 +43,12 @@ export default {
       by: user._id,
       date: time,
       read: true,
+    });
+    const rec = data.onModel === 'User' ? _to._id : deptUser._id;
+    _req.metaData.seen.push({
+      by: rec,
+      date: time,
+      read: false,
     });
     // } else {
     _req.to = _to._id;

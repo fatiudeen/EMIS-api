@@ -4,22 +4,21 @@ import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Server } from 'socket.io';
-import { createServer } from 'http';
+// import { Server } from 'socket.io';
+// import { createServer } from 'http';
 
 import authRoute from './routes/auth.Route.js';
 import userRoute from './routes/user.Route.js';
 import adminRoute from './routes/admin.Route.js';
 import { errorHandler, error404 } from './middlewares/error.js';
 import protect from './middlewares/protect.js';
-import db from './helpers/db.js';
 
 const app = express();
 const corsOptions = {
   origin: '*',
 };
-const httpServer = createServer(app);
-const io = new Server(httpServer);
+// const httpServer = createServer(app);
+// const io = new Server(httpServer);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,10 +29,10 @@ app.use(urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
+// app.use((req, res, next) => {
+//   req.io = io;
+//   next();
+// });
 
 //Routes
 app.use(
@@ -47,7 +46,5 @@ app.use('/api/admin', protect('Admin'), adminRoute);
 app.use('/api/user', protect('User'), userRoute);
 app.use('*', error404);
 app.use(errorHandler);
-// Database configuration
-db();
 
-export default httpServer;
+export default app;

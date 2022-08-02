@@ -21,7 +21,7 @@ export default {
         let data = requestParser.parseRequest(req);
         data.onModel = req.query.ref === 'user' ? 'User' : 'Department';
         let result = await requestService.createRequest(data, req.user);
-        req.io.emit('task', result);
+        // req.io.emit('task', result);
         SuccessResponse.success(res, result);
       } catch (error) {
         next(error);
@@ -195,7 +195,7 @@ export default {
         let id = req.params.requestId;
 
         let result = await requestService.approveRequest(id);
-        req.io.emit('task', result);
+        // req.io.emit('task', result);
         SuccessResponse.success(res, result);
       } catch (error) {
         next(error);
@@ -212,7 +212,7 @@ export default {
         data._to = true;
 
         let result = await requestService.supportMail(data);
-        req.io.emit('support', result);
+        // req.io.emit('support', result);
         SuccessResponse.success(res, result);
       } catch (error) {
         next(error);
@@ -253,7 +253,7 @@ export default {
         try {
           let data = requestParser.parseRequest(req);
           let result = await sendService.create(data);
-          req.io.emit('convo', result);
+          // req.io.emit('convo', result);
           SuccessResponse.success(res, result);
         } catch (error) {
           next(error);
@@ -284,7 +284,7 @@ export default {
             data,
             req.params.groupConvoId
           );
-          req.io.emit('group', result);
+          // req.io.emit('group', result);
           SuccessResponse.success(res, result);
         } catch (error) {
           next(error);
@@ -299,7 +299,7 @@ export default {
             req.params.convoId,
             req.body.name
           );
-          req.io.emit('group', result);
+          // req.io.emit('group', result);
           SuccessResponse.success(res, result);
         } catch (error) {
           next(error);
@@ -315,7 +315,7 @@ export default {
             req.params.convoId,
             req.params.userId
           );
-          req.io.emit('group', result);
+          // req.io.emit('group', result);
           SuccessResponse.success(res, result);
         } catch (error) {
           next(error);
@@ -330,7 +330,7 @@ export default {
             req.params.convoId,
             req.body.userId
           );
-          req.io.emit('group', result);
+          // req.io.emit('group', result);
           SuccessResponse.success(res, result);
         } catch (error) {
           next(error);
@@ -345,7 +345,7 @@ export default {
             req.params.convoId,
             req.user._id
           );
-          req.io.emit('group', result);
+          // req.io.emit('group', result);
           SuccessResponse.success(res, result);
         } catch (error) {
           next(error);
