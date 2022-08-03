@@ -41,9 +41,11 @@ export const createAdminDept = async () => {
     const admin = await DepartmentModel.findOne({ abbr: 'ADMIN' });
 
     if (!admin) {
-      await DepartmentModel.create(DataView);
+      const dept = new DepartmentModel(data);
+      await dept.save();
+      // await DepartmentModel.create(DataView);
     }
-    await admin.save();
+    // await admin.save();
   } catch (error) {
     throw new ErrorResponse(error);
   }
