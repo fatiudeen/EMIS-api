@@ -8,11 +8,12 @@ import DepartmentModel from '../models/Department.model.js';
 
 export default {
   createRequest: async (data, user) => {
+    console.log(data);
     let request = await Request.findOne({ reference: data.reference });
     if (request) {
       throw new ErrorResponse('Request Exists', 409);
     }
-    if (user.role !== 'Registry') {
+    if (user.role !== 'Registry' || user.role !== 'Admin') {
       data._to = false;
       // data.to = undefined;
     } else {

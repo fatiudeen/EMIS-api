@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import config from '../../../config/config.js';
 import constants from '../../../config/constants.js';
-import { createAdminAccount } from './admin_seeder.js';
+import { createAdminAccount, createAdminDept } from './admin_seeder.js';
 
 export default () => {
   mongoose
@@ -9,6 +9,7 @@ export default () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
+    .then(() => createAdminDept())
     .then(() => createAdminAccount())
     // .then(() => User.syncIndexes())
     .then(() => console.log('seed created'))

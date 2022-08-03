@@ -21,11 +21,12 @@ export default {
     try {
       let data = {};
       data.title = `${req.body.name}: ${req.body.title}`;
-      data.referece = req.body.reference;
+      data.reference = req.body.reference;
       data._to = true;
       data.message = {
         body: req.body.text,
       };
+
       let result = await userService.forgotPassword(data);
       SuccessResponse.success(res, result);
     } catch (error) {

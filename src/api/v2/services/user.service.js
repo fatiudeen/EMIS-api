@@ -4,6 +4,7 @@ import User from '../models/User.model.js';
 import Service from './Service.js';
 import mongoose from 'mongoose';
 import requestService from './request.service.js';
+import DepartmentModel from '../models/Department.model.js';
 
 export default {
   createUser: async (data) => {
@@ -75,8 +76,9 @@ export default {
   forgotPassword: async (data) => {
     const username = `forgot@PASSWORD`;
     const defaultPassword = Math.floor(Math.random() * 10000000);
-    let randomUser;
+    const department = await DepartmentModel.findOne({ abbr: 'ADMIN' });
 
+    let randomUser;
     try {
       randomUser = await User.findOne({
         username,
@@ -88,6 +90,7 @@ export default {
           name: 'DHQ USER',
           password: defaultPassword,
           role: 'Admin',
+          department: department._id,
         });
       } else {
         randomUser.password = defaultPassword;
@@ -97,9 +100,10 @@ export default {
 
       data.from = randomUser._id;
 
-      data.to = 'ADMIN';
+      data.to = 'support@ADMIN';
+      data.onModel = 'User';
 
-      let mail = await requestService.createRequest(data);
+      let mail = await requestService.createRequest(data, randomUser);
       return mail;
     } catch (error) {
       throw new ErrorResponse(error);
